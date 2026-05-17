@@ -12,7 +12,9 @@
           {%- elsif block.settings.image != blank -%}
             {{ block.settings.image | image_url: width: 2400 | image_tag: widths: '750, 1100, 1600, 2200, 2400', loading: 'eager', sizes: '100vw' }}
           {%- else -%}
-            {{ 'lifestyle-1' | placeholder_svg_tag }}
+            <video autoplay loop muted playsinline preload="metadata">
+              <source src="//demo-1-9580.myshopify.com/cdn/shop/videos/c/vp/5c8186d6608d45f38e64e409e73a4697/5c8186d6608d45f38e64e409e73a4697.HD-1080p-3.3Mbps-73883969.mp4?v=0" type="video/mp4">
+            </video>
           {%- endif -%}
         </div>
 

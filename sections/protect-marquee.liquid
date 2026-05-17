@@ -1,0 +1,48 @@
+<section class="protect-marquee" aria-label="{{ section.settings.heading | escape }}">
+  <div class="protect-marquee__heading">
+    <p>{{ section.settings.eyebrow }}</p>
+    <h2><a href="{{ section.settings.link }}" target="_blank" rel="noopener">{{ section.settings.heading }}</a></h2>
+  </div>
+
+  <div class="protect-marquee__track" style="--protect-marquee-speed: {{ section.settings.speed }}s;">
+    <div class="protect-marquee__items">
+      {%- for i in (1..10) -%}
+        <figure class="protect-marquee__item">
+          <img
+            src="//demo-1-9580.myshopify.com/cdn/shop/files/inst-{{ i }}.jpg?v=1771184705&amp;width=832"
+            alt=""
+            width="832"
+            height="1110"
+            loading="lazy"
+          >
+        </figure>
+      {%- endfor -%}
+      {%- for i in (1..10) -%}
+        <figure class="protect-marquee__item" aria-hidden="true">
+          <img
+            src="//demo-1-9580.myshopify.com/cdn/shop/files/inst-{{ i }}.jpg?v=1771184705&amp;width=832"
+            alt=""
+            width="832"
+            height="1110"
+            loading="lazy"
+          >
+        </figure>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Protect image marquee",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Follow the uniform" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "@protect.ldn" },
+    { "type": "url", "id": "link", "label": "Instagram link" },
+    { "type": "range", "id": "speed", "label": "Speed", "min": 16, "max": 80, "step": 2, "unit": "s", "default": 38 }
+  ],
+  "presets": [
+    { "name": "Protect image marquee" }
+  ]
+}
+{% endschema %}

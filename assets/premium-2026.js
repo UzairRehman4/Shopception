@@ -171,6 +171,7 @@
     const previousList = document.querySelector('[data-previous-searches-list]');
     const clearBtn = document.querySelector('[data-clear-searches]');
     let timer;
+    const resetButton = form.querySelector('[data-search-reset]');
     const getPrevious = () => JSON.parse(localStorage.getItem('shopceptionSearches') || '[]');
     const saveSearch = (term) => {
       const value = term.trim();
@@ -189,7 +190,13 @@
       if (!resultsWrap || !resultsList) return;
       resultsWrap.hidden = products.length === 0;
       if (recommendations) recommendations.hidden = products.length > 0;
-      resultsList.innerHTML = products.map((product) => `<article class="premium-search-product"><a class="premium-search-product__media" href="${product.url}">${product.image ? `<img src="${product.image}" alt="${product.title}">` : ''}</a><div><a class="premium-search-product__title" href="${product.url}">${product.title}</a><span>${product.price || ''}</span><a class="premium-mini-button" href="${product.url}">View</a></div></article>`).join('');
+      resultsList.innerHTML = products.map((product) => `
+        <article class="flowbit-search-card">
+          <a class="flowbit-search-card__link" href="${product.url}"><span class="visually-hidden">${product.title}</span></a>
+          <div class="flowbit-search-card__media">${product.image ? `<img src="${product.image}" alt="" loading="lazy">` : ''}</div>
+          <p>${product.title}</p>
+        </article>
+      `).join('');
     };
     const search = async (term) => {
       const q = term.trim();
@@ -208,7 +215,19 @@
         renderProducts([]);
       }
     };
-    input?.addEventListener('input', () => { window.clearTimeout(timer); timer = window.setTimeout(() => search(input.value), 220); });
+    input?.addEventListener('input', () => {
+      if (resetButton) resetButton.hidden = input.value.trim().length === 0;
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => search(input.value), 220);
+    });
+    resetButton?.addEventListener('click', () => {
+      if (!input) return;
+      input.value = '';
+      resetButton.hidden = true;
+      if (resultsWrap) resultsWrap.hidden = true;
+      if (recommendations) recommendations.hidden = false;
+      input.focus();
+    });
     form.addEventListener('submit', () => saveSearch(input.value));
     previousList?.addEventListener('click', (event) => {
       const chip = event.target.closest('[data-search-chip]');
@@ -226,7 +245,7 @@
         const input = document.querySelector('#search-drawer input[type="search"]');
         input?.focus();
         if (hasGSAP() && !reduceMotion) {
-          gsap.fromTo('#search-drawer .premium-drawer-header, #search-drawer .premium-search__form, #search-drawer .premium-search__panel', { y: 14, opacity: 0 }, { y: 0, opacity: 1, stagger: .045, duration: .55, ease: 'power4.out' });
+          gsap.fromTo('#search-drawer .flowbit-search__header, #search-drawer .flowbit-search__content, #search-drawer .flowbit-search__footer', { y: 14, opacity: 0 }, { y: 0, opacity: 1, stagger: .045, duration: .55, ease: 'power4.out' });
         }
       }, 260));
     });
@@ -241,6 +260,34 @@
       if (hasGSAP()) gsap.to(glow, { x: event.clientX, y: event.clientY, duration: .55, ease: 'power3.out' });
       else glow.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
     }, { passive: true });
+  };
+
+  const initPremiumScroll = () => {
+    const progress = document.createElement('div');
+    progress.className = 'premium-scroll-progress';
+    progress.setAttribute('aria-hidden', 'true');
+    document.body.append(progress);
+
+    const items = qsa('[data-premium-scroll], .flowbit-collection__grid .product-card, .flowbit-product .product-page__media-item');
+    const update = () => {
+      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+      progress.style.transform = `scaleX(${Math.min(1, window.scrollY / max)})`;
+
+      if (reduceMotion) return;
+      items.forEach((item) => {
+        const rect = item.getBoundingClientRect();
+        const visible = rect.top < window.innerHeight * .92 && rect.bottom > window.innerHeight * .08;
+        item.classList.toggle('is-premium-visible', visible);
+        const media = item.querySelector('[data-premium-scroll-media], img');
+        if (!media || !visible) return;
+        const center = rect.top + rect.height / 2;
+        const offset = (center - window.innerHeight / 2) / window.innerHeight;
+        media.style.setProperty('--premium-scroll-y', `${offset * -18}px`);
+      });
+    };
+    window.addEventListener('scroll', () => requestAnimationFrame(update), { passive: true });
+    window.addEventListener('resize', () => requestAnimationFrame(update));
+    update();
   };
 
   const initFallbackReveal = () => {
@@ -268,6 +315,7 @@
     initPredictiveSearch();
     initSearchFocus();
     initPointerGlow();
+    initPremiumScroll();
     initFallbackReveal();
     if (hasGSAP()) window.setTimeout(() => ScrollTrigger.refresh(), 400);
   };

@@ -4,6 +4,7 @@
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isModifiedClick = (event) => event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
   let isTransitioning = false;
+  const duration = 400;
 
   const createWipe = () => {
     let wipe = document.querySelector('[data-pt-wipe]');
@@ -13,25 +14,15 @@
     wipe.className = 'pt-wipe';
     wipe.setAttribute('data-pt-wipe', '');
     wipe.setAttribute('aria-hidden', 'true');
-    wipe.innerHTML = '<span class="pt-wipe__panel"></span>';
+    const cols = window.matchMedia('(min-width: 769px)').matches ? 4 : 3;
+    const rows = window.matchMedia('(min-width: 769px)').matches ? 4 : 6;
+    wipe.innerHTML = Array.from({ length: cols * rows }, (_, index) => {
+      const row = Math.floor(index / cols);
+      const col = index % cols;
+      return `<span class="pt-tile" style="transition-delay:${(row + col) * 0.05}s"></span>`;
+    }).join('');
     document.body.appendChild(wipe);
     return wipe;
-  };
-
-  const panel = () => document.querySelector('.pt-wipe__panel');
-
-  const setPanel = (transform) => {
-    const item = panel();
-    if (!item) return;
-    item.style.transition = 'none';
-    item.style.transform = transform;
-  };
-
-  const animatePanel = (transform, duration) => {
-    const item = panel();
-    if (!item) return;
-    item.style.transition = `transform ${duration}ms cubic-bezier(.83,0,.17,1)`;
-    item.style.transform = transform;
   };
 
   const afterPaint = (callback) => requestAnimationFrame(() => requestAnimationFrame(callback));
@@ -40,19 +31,17 @@
     if (prefersReducedMotion) return;
     const wipe = createWipe();
     wipe.classList.add('is-active');
+    document.documentElement.classList.add('pt-animating');
     document.body.classList.add('pt-lock');
 
-    setPanel('translate3d(0,0,0)');
-
     afterPaint(() => {
-      animatePanel('translate3d(0,-100.25%,0)', 900);
+      wipe.classList.remove('is-active');
+      document.documentElement.classList.remove('pt-animating');
     });
 
     window.setTimeout(() => {
-      wipe.classList.remove('is-active');
       document.body.classList.remove('pt-lock');
-      setPanel('translate3d(0,100.25%,0)');
-    }, 980);
+    }, duration + 360);
   };
 
   const leave = (href) => {
@@ -66,17 +55,12 @@
 
     const wipe = createWipe();
     wipe.classList.add('is-active');
+    document.documentElement.classList.add('pt-animating');
     document.body.classList.add('pt-lock', 'pt-leaving');
-
-    setPanel('translate3d(0,100.25%,0)');
-
-    afterPaint(() => {
-      animatePanel('translate3d(0,0,0)', 720);
-    });
 
     window.setTimeout(() => {
       window.location.href = href;
-    }, 760);
+    }, duration + 20);
   };
 
   const shouldSkip = (link, event) => {
@@ -110,6 +94,7 @@
 
   window.addEventListener('pageshow', () => {
     isTransitioning = false;
+    document.documentElement.classList.remove('pt-animating');
     document.body.classList.remove('pt-lock', 'pt-leaving');
   });
 })();

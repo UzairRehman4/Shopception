@@ -7,7 +7,7 @@
   endif
 -%}
 
-<product-info class="product-page product-page--premium page-width" data-section-id="{{ section.id }}">
+<product-info class="product-page product-page--premium flowbit-product" data-section-id="{{ section.id }}">
   <script type="application/json" data-product-json>
     {{ product | json }}
   </script>
@@ -101,12 +101,14 @@
           {%- endunless -%}
 
           <div class="product-form__row">
-            <label class="quantity-field" for="Quantity-{{ section.id }}">
-              <span>{{ 'products.product.quantity' | t }}</span>
-              <input id="Quantity-{{ section.id }}" type="number" name="quantity" value="1" min="1">
-            </label>
-
+            <input id="Quantity-{{ section.id }}" type="hidden" name="quantity" value="1" min="1">
             <button class="button product-form__submit" type="submit" data-add-to-cart {% unless current_variant.available %}disabled{% endunless %}>
+              <span aria-hidden="true" class="product-form__submit-icon">
+                <svg viewBox="0 0 20 20" fill="none">
+                  <path d="M16.608 9.421V6.906H3.392v8.016c0 .567.224 1.112.624 1.513.4.402.941.627 1.506.627H8.63M8.818 3h2.333c.618 0 1.212.247 1.649.686a2.35 2.35 0 0 1 .683 1.658v1.562H6.486V5.344c0-.622.246-1.218.683-1.658A2.33 2.33 0 0 1 8.82 3" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+                  <path d="M14.608 12.563v5m2.5-2.5h-5" stroke="currentColor" stroke-linecap="round" stroke-width="1.5"/>
+                </svg>
+              </span>
               {%- if current_variant.available -%}
                 {{ 'products.product.add_to_cart' | t }}
               {%- else -%}
@@ -156,7 +158,7 @@
 <div class="product-media-modal" data-product-media-modal hidden>
   <button class="product-media-modal__close" type="button" data-product-media-close>Close</button>
   <div class="product-media-modal__stage">
-    <img src="" alt="" data-product-media-modal-image>
+    <img src="" alt="" width="1600" height="2000" data-product-media-modal-image>
   </div>
 </div>
 

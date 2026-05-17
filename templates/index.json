@@ -16,30 +16,30 @@
           "type": "slide",
           "settings": {
             "eyebrow": "01 / New editorial drop",
-            "heading": "Premium motion built for modern commerce",
-            "text": "A full-screen shopping story with media, product focus, and fast buying paths.",
-            "button_label": "Shop the drop",
-            "button_link": "/collections/all"
+            "heading": "New drop out now",
+            "text": "shop now",
+            "button_label": "",
+            "button_link": ""
           }
         },
         "slide_2": {
           "type": "slide",
           "settings": {
             "eyebrow": "02 / Campaign ready",
-            "heading": "Big visuals with product-first selling",
-            "text": "Use dynamic images, videos, and featured products from the Shopify editor.",
-            "button_label": "Explore all",
-            "button_link": "/collections/all"
+            "heading": "Protect the uniform",
+            "text": "shop now",
+            "button_label": "",
+            "button_link": ""
           }
         },
         "slide_3": {
           "type": "slide",
           "settings": {
             "eyebrow": "03 / Fast checkout",
-            "heading": "Add to cart without breaking the story",
-            "text": "A premium homepage layout that feels like a campaign and works like a store.",
-            "button_label": "View products",
-            "button_link": "/collections/all"
+            "heading": "Built for every day",
+            "text": "shop now",
+            "button_label": "",
+            "button_link": ""
           }
         }
       },
@@ -74,16 +74,15 @@
       "block_order": ["tile_1", "tile_2", "tile_3"],
       "settings": { "heading": "Merchandising moments" }
     },
-    "lookbook_band": {
-      "type": "lookbook-band",
+    "protect_marquee": {
+      "type": "protect-marquee",
       "settings": {
-        "eyebrow": "Lookbook",
-        "heading": "Make every collection feel like a launch",
-        "text": "Use this cinematic band for fashion drops, seasonal campaigns, and visual merchandising that deserves the full screen.",
-        "button_label": "View the edit",
-        "button_link": "/collections/all"
+        "eyebrow": "Follow the uniform",
+        "heading": "@protect.ldn",
+        "link": "https://www.instagram.com/protect.ldn",
+        "speed": 40
       }
     }
   },
-  "order": ["premium_slider", "featured_collection", "collection_story", "promo_mosaic", "lookbook_band"]
+  "order": ["premium_slider", "featured_collection", "collection_story", "promo_mosaic", "protect_marquee"]
 }

@@ -143,9 +143,36 @@ const themeCart = {
     }
   },
 
+  flash(title = '') {
+    const oldToast = document.querySelector('[data-cart-toast]');
+    oldToast?.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'cart-toast';
+    toast.setAttribute('data-cart-toast', '');
+    toast.setAttribute('role', 'status');
+    toast.innerHTML = `
+      <span aria-hidden="true">+</span>
+      <div>
+        <strong>Added to cart</strong>
+        ${title ? `<p>${escapeHtml(title)}</p>` : ''}
+      </div>
+    `;
+    document.body.append(toast);
+
+    requestAnimationFrame(() => toast.classList.add('is-visible'));
+    window.setTimeout(() => {
+      toast.classList.remove('is-visible');
+      window.setTimeout(() => toast.remove(), 260);
+    }, 1800);
+  },
+
   render(cart) {
     document.querySelectorAll('[data-cart-count]').forEach((count) => {
       count.textContent = cart.item_count;
+      const bubble = count.closest('.cart-bubble');
+      bubble?.classList.remove('is-pulsing');
+      requestAnimationFrame(() => bubble?.classList.add('is-pulsing'));
     });
 
     const itemsContainer = document.querySelector('[data-cart-drawer-items]');
@@ -159,7 +186,7 @@ const themeCart = {
 
     if (cart.item_count === 0) {
       itemsContainer.innerHTML = `
-        <div class="empty-state cart-drawer__empty">
+        <div class="empty-state cart-drawer__empty premium-cart-empty">
           <p>${escapeHtml(window.theme?.strings?.cartEmpty || 'Your cart is empty')}</p>
           <a class="button" href="${window.theme?.routes?.allProducts || '/collections/all'}">${escapeHtml(window.theme?.strings?.continueShopping || 'Continue shopping')}</a>
         </div>
@@ -176,7 +203,7 @@ const themeCart = {
         : '';
 
       return `
-        <article class="cart-drawer__item">
+        <article class="cart-drawer__item premium-cart-item">
           <a class="cart-drawer__image" href="${escapeHtml(item.url)}">${image}</a>
           <div>
             <a class="cart-drawer__title" href="${escapeHtml(item.url)}">${escapeHtml(item.product_title)}</a>
@@ -203,8 +230,10 @@ class ProductForm extends HTMLElement {
   async onSubmit(event) {
     event.preventDefault();
 
+    const originalText = this.button.textContent;
     this.button.setAttribute('aria-busy', 'true');
     this.button.disabled = true;
+    this.animateToCart();
 
     try {
       const response = await fetch('/cart/add.js', {
@@ -215,16 +244,43 @@ class ProductForm extends HTMLElement {
 
       if (!response.ok) throw new Error('Unable to add item to cart');
 
+      const item = await response.json();
+      this.button.textContent = 'Added';
+      this.button.classList.add('is-added');
+      themeCart.flash(item.product_title);
       await themeCart.refresh(true);
     } catch (error) {
+      this.button.textContent = originalText;
       this.dispatchEvent(new CustomEvent('theme:error', {
         bubbles: true,
         detail: { message: error.message }
       }));
     } finally {
-      this.button.removeAttribute('aria-busy');
-      this.button.disabled = false;
+      window.setTimeout(() => {
+        this.button.textContent = originalText;
+        this.button.classList.remove('is-added');
+        this.button.removeAttribute('aria-busy');
+        this.button.disabled = false;
+      }, 700);
     }
+  }
+
+  animateToCart() {
+    const scope = this.closest('.product-card, .home-premium-slider__side-card, .premium-search-product, .product-page');
+    const image = scope?.querySelector('img');
+    const cart = document.querySelector('[data-cart-trigger]');
+    if (!image || !cart || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const from = image.getBoundingClientRect();
+    const to = cart.getBoundingClientRect();
+    const ghost = image.cloneNode();
+    ghost.style.cssText = `position:fixed;left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px;object-fit:cover;z-index:2147482000;pointer-events:none;border-radius:0;box-shadow:0 18px 40px rgba(0,0,0,.22);`;
+    document.body.appendChild(ghost);
+    const animation = ghost.animate([
+      { transform: 'translate3d(0,0,0) scale(1)', opacity: 1 },
+      { transform: `translate3d(${to.left - from.left}px,${to.top - from.top}px,0) scale(.08)`, opacity: .12 }
+    ], { duration: 620, easing: 'cubic-bezier(.2,.8,.2,1)' });
+    animation.onfinish = () => ghost.remove();
   }
 }
 
