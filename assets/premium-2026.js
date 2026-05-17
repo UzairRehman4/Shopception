@@ -1,14 +1,45 @@
 (() => {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const hasGSAP = () => window.gsap && window.ScrollTrigger;
+
+  const qsa = (selector, scope = document) => [...scope.querySelectorAll(selector)];
 
   const markLoaded = () => {
     document.body.classList.add('is-loaded');
   };
 
+  const splitTextToLines = (element) => {
+    if (!element || element.dataset.gsapSplit === 'true') return [];
+
+    const text = element.textContent.trim().replace(/\s+/g, ' ');
+    if (!text) return [];
+
+    const words = text.split(' ');
+    element.dataset.gsapSplit = 'true';
+    element.setAttribute('aria-label', text);
+    element.innerHTML = words.map((word) => `<span class="gsap-word-wrap" aria-hidden="true"><span class="gsap-word">${word}</span></span>`).join(' ');
+    return qsa('.gsap-word', element);
+  };
+
+  const splitTextToChars = (element) => {
+    if (!element || element.dataset.gsapCharSplit === 'true') return [];
+
+    const text = element.textContent.trim();
+    if (!text) return [];
+
+    element.dataset.gsapCharSplit = 'true';
+    element.setAttribute('aria-label', text);
+    element.innerHTML = [...text].map((char) => {
+      const value = char === ' ' ? '&nbsp;' : char;
+      return `<span class="gsap-char" aria-hidden="true">${value}</span>`;
+    }).join('');
+    return qsa('.gsap-char', element);
+  };
+
   const buildLoader = () => {
     if (sessionStorage.getItem('shopceptionLoaderSeen') || reduceMotion) {
       markLoaded();
-      return;
+      return Promise.resolve();
     }
 
     const loader = document.createElement('div');
@@ -23,12 +54,36 @@
     `;
     document.body.prepend(loader);
 
-    window.setTimeout(() => {
-      loader.classList.add('is-hidden');
-      markLoaded();
-      sessionStorage.setItem('shopceptionLoaderSeen', 'true');
-      window.setTimeout(() => loader.remove(), 850);
-    }, 1450);
+    return new Promise((resolve) => {
+      if (!hasGSAP()) {
+        window.setTimeout(() => {
+          loader.classList.add('is-hidden');
+          markLoaded();
+          sessionStorage.setItem('shopceptionLoaderSeen', 'true');
+          window.setTimeout(() => loader.remove(), 850);
+          resolve();
+        }, 1300);
+        return;
+      }
+
+      const tl = gsap.timeline({ defaults: { ease: 'power4.out' } });
+      tl.fromTo(loader.querySelector('.shopception-loader__brand span'), { yPercent: 110, rotate: 4 }, { yPercent: 0, rotate: 0, duration: 1 })
+        .fromTo(loader.querySelector('.shopception-loader__bar::after'), {}, {}, 0)
+        .fromTo(loader.querySelectorAll('.shopception-loader__meta span'), { y: 16, opacity: 0 }, { y: 0, opacity: 1, stagger: .08, duration: .7 }, .25)
+        .to(loader, {
+          opacity: 0,
+          duration: .65,
+          delay: .35,
+          onStart: () => {
+            markLoaded();
+            sessionStorage.setItem('shopceptionLoaderSeen', 'true');
+          },
+          onComplete: () => {
+            loader.remove();
+            resolve();
+          }
+        });
+    });
   };
 
   const initHeader = () => {
@@ -52,28 +107,114 @@
       }
     }, { passive: true });
     update();
+
+    if (hasGSAP() && !reduceMotion) {
+      gsap.fromTo(header, { yPercent: -100 }, { yPercent: 0, duration: 1, ease: 'power4.out', delay: .25 });
+      gsap.fromTo(qsa('.site-header__nav-item, .site-header__actions > *'), { y: -10, opacity: 0 }, { y: 0, opacity: 1, stagger: .045, duration: .7, ease: 'power3.out', delay: .55 });
+    }
   };
 
-  const initReveal = () => {
-    const items = document.querySelectorAll('.section, .product-card, .collection-story__card, .promo-mosaic__tile, .hero__content, .lookbook-band__content');
-    if (!items.length) return;
+  const initHero = () => {
+    if (!hasGSAP() || reduceMotion) return;
+    const hero = document.querySelector('.hero');
+    if (!hero) return;
 
-    if (reduceMotion || !('IntersectionObserver' in window)) {
-      items.forEach((item) => item.classList.add('is-visible'));
+    const words = splitTextToLines(hero.querySelector('.hero__heading'));
+    const eyebrow = hero.querySelector('.hero__eyebrow');
+    const text = hero.querySelector('.hero__text');
+    const button = hero.querySelector('.button');
+    const media = hero.querySelector('.hero__media img');
+
+    const tl = gsap.timeline({ defaults: { ease: 'power4.out' }, delay: .08 });
+    if (media) tl.fromTo(media, { scale: 1.12, opacity: .72 }, { scale: 1.01, opacity: 1, duration: 1.7 }, 0);
+    if (eyebrow) tl.fromTo(eyebrow, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: .75 }, .18);
+    if (words.length) tl.fromTo(words, { yPercent: 120, rotate: 4, opacity: 0 }, { yPercent: 0, rotate: 0, opacity: 1, duration: 1.05, stagger: .035 }, .28);
+    if (text) tl.fromTo(text, { y: 24, opacity: 0 }, { y: 0, opacity: 1, duration: .85 }, .72);
+    if (button) tl.fromTo(button, { y: 22, opacity: 0 }, { y: 0, opacity: 1, duration: .85 }, .82);
+
+    if (media) {
+      gsap.to(media, {
+        yPercent: 10,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: hero,
+          start: 'top top',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+    }
+  };
+
+  const initTextReveals = () => {
+    if (!hasGSAP() || reduceMotion) {
+      qsa('.section, .product-card, .collection-story__card, .promo-mosaic__tile, .hero__content, .lookbook-band__content').forEach((item) => item.classList.add('is-visible'));
+      markLoaded();
       return;
     }
 
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        entry.target.classList.add('is-visible');
-        observer.unobserve(entry.target);
-      });
-    }, { threshold: 0.14, rootMargin: '0px 0px -8% 0px' });
+    gsap.registerPlugin(ScrollTrigger);
 
-    items.forEach((item, index) => {
-      item.style.transitionDelay = `${Math.min(index % 6, 5) * 70}ms`;
-      observer.observe(item);
+    qsa('.section__title, .collection-story__title, .promo-mosaic__content h3, .lookbook-band__title, .product-page__heading h1, .product-page__title').forEach((heading) => {
+      if (heading.closest('.hero')) return;
+      const words = splitTextToLines(heading);
+      if (!words.length) return;
+      gsap.fromTo(words,
+        { yPercent: 115, rotate: 3, opacity: 0 },
+        {
+          yPercent: 0,
+          rotate: 0,
+          opacity: 1,
+          duration: 1,
+          stagger: .028,
+          ease: 'power4.out',
+          scrollTrigger: { trigger: heading, start: 'top 82%', once: true }
+        }
+      );
+    });
+
+    qsa('.eyebrow, .lede, .hero__text, .promo-mosaic__content p, .lookbook-band__text, .product-card__title, .price').forEach((item) => {
+      if (item.closest('.hero')) return;
+      gsap.fromTo(item,
+        { y: 18, opacity: 0 },
+        { y: 0, opacity: 1, duration: .75, ease: 'power3.out', scrollTrigger: { trigger: item, start: 'top 88%', once: true } }
+      );
+    });
+
+    qsa('.section, .product-card, .collection-story__card, .promo-mosaic__tile, .hero__content, .lookbook-band__content').forEach((item) => item.classList.add('is-visible'));
+  };
+
+  const initMediaMotion = () => {
+    if (!hasGSAP() || reduceMotion) return;
+    qsa('.editorial-split__media img, .collection-story__media img, .promo-mosaic__media img, .lookbook-band__media img').forEach((image) => {
+      gsap.fromTo(image,
+        { scale: 1.12, yPercent: -4 },
+        {
+          scale: 1.02,
+          yPercent: 5,
+          ease: 'none',
+          scrollTrigger: { trigger: image.closest('section') || image, start: 'top bottom', end: 'bottom top', scrub: true }
+        }
+      );
+    });
+  };
+
+  const initProductCards = () => {
+    if (!hasGSAP() || reduceMotion) return;
+    qsa('.product-card').forEach((card) => {
+      const media = card.querySelector('.product-card__media');
+      const info = card.querySelector('.product-card__info');
+      gsap.fromTo(card,
+        { y: 38, opacity: 0 },
+        { y: 0, opacity: 1, duration: .85, ease: 'power3.out', scrollTrigger: { trigger: card, start: 'top 88%', once: true } }
+      );
+      card.addEventListener('mouseenter', () => {
+        gsap.to(media, { y: -5, duration: .45, ease: 'power3.out' });
+        gsap.to(info, { y: 3, duration: .45, ease: 'power3.out' });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to([media, info], { y: 0, duration: .5, ease: 'power3.out' });
+      });
     });
   };
 
@@ -81,7 +222,11 @@
     document.querySelectorAll('[data-drawer-open="search-drawer"]').forEach((button) => {
       button.addEventListener('click', () => {
         window.setTimeout(() => {
-          document.querySelector('#search-drawer input[type="search"]')?.focus();
+          const input = document.querySelector('#search-drawer input[type="search"]');
+          input?.focus();
+          if (hasGSAP() && !reduceMotion) {
+            gsap.fromTo('#search-drawer .drawer__header, #search-drawer .drawer__search > *', { y: 24, opacity: 0 }, { y: 0, opacity: 1, stagger: .08, duration: .8, ease: 'power4.out' });
+          }
         }, 260);
       });
     });
@@ -105,16 +250,40 @@
     glow.className = 'premium-pointer-glow';
     document.body.append(glow);
     window.addEventListener('pointermove', (event) => {
-      glow.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
+      if (hasGSAP()) {
+        gsap.to(glow, { x: event.clientX, y: event.clientY, duration: .55, ease: 'power3.out' });
+      } else {
+        glow.style.transform = `translate3d(${event.clientX}px, ${event.clientY}px, 0)`;
+      }
     }, { passive: true });
   };
 
-  document.addEventListener('DOMContentLoaded', () => {
-    buildLoader();
+  const initFallbackReveal = () => {
+    const items = qsa('.section, .product-card, .collection-story__card, .promo-mosaic__tile, .hero__content, .lookbook-band__content');
+    if (!items.length || hasGSAP()) return;
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: .14, rootMargin: '0px 0px -8% 0px' });
+    items.forEach((item) => observer.observe(item));
+  };
+
+  const init = async () => {
+    await buildLoader();
     initHeader();
-    initReveal();
+    initHero();
+    initTextReveals();
+    initMediaMotion();
+    initProductCards();
     initSearchFocus();
     initPageExit();
     initPointerGlow();
-  });
+    initFallbackReveal();
+    if (hasGSAP()) window.setTimeout(() => ScrollTrigger.refresh(), 400);
+  };
+
+  document.addEventListener('DOMContentLoaded', init);
 })();
