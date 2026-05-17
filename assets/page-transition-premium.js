@@ -13,21 +13,25 @@
     wipe.className = 'pt-wipe';
     wipe.setAttribute('data-pt-wipe', '');
     wipe.setAttribute('aria-hidden', 'true');
-    wipe.innerHTML = '<span class="pt-wipe__panel"></span><span class="pt-wipe__panel"></span><span class="pt-wipe__panel"></span><span class="pt-wipe__panel"></span>';
+    wipe.innerHTML = '<span class="pt-wipe__panel"></span>';
     document.body.appendChild(wipe);
     return wipe;
   };
 
-  const panels = () => Array.from(document.querySelectorAll('.pt-wipe__panel'));
+  const panel = () => document.querySelector('.pt-wipe__panel');
 
-  const setPanel = (panel, transform) => {
-    panel.style.transition = 'none';
-    panel.style.transform = transform;
+  const setPanel = (transform) => {
+    const item = panel();
+    if (!item) return;
+    item.style.transition = 'none';
+    item.style.transform = transform;
   };
 
-  const animatePanel = (panel, transform, duration, delay = 0) => {
-    panel.style.transition = `transform ${duration}ms cubic-bezier(.83,0,.17,1) ${delay}ms`;
-    panel.style.transform = transform;
+  const animatePanel = (transform, duration) => {
+    const item = panel();
+    if (!item) return;
+    item.style.transition = `transform ${duration}ms cubic-bezier(.83,0,.17,1)`;
+    item.style.transform = transform;
   };
 
   const afterPaint = (callback) => requestAnimationFrame(() => requestAnimationFrame(callback));
@@ -35,21 +39,20 @@
   const enter = () => {
     if (prefersReducedMotion) return;
     const wipe = createWipe();
-    const items = panels();
-
     wipe.classList.add('is-active');
     document.body.classList.add('pt-lock');
-    items.forEach((panel) => setPanel(panel, 'translate3d(0,0,0)'));
+
+    setPanel('translate3d(0,0,0)');
 
     afterPaint(() => {
-      items.forEach((panel, index) => animatePanel(panel, 'translate3d(0,-100.5%,0)', 860, index * 34));
+      animatePanel('translate3d(0,-100.25%,0)', 900);
     });
 
     window.setTimeout(() => {
       wipe.classList.remove('is-active');
       document.body.classList.remove('pt-lock');
-      items.forEach((panel) => setPanel(panel, 'translate3d(0,100.5%,0)'));
-    }, 1120);
+      setPanel('translate3d(0,100.25%,0)');
+    }, 980);
   };
 
   const leave = (href) => {
@@ -62,19 +65,18 @@
     }
 
     const wipe = createWipe();
-    const items = panels();
-
     wipe.classList.add('is-active');
     document.body.classList.add('pt-lock', 'pt-leaving');
-    items.forEach((panel) => setPanel(panel, 'translate3d(0,100.5%,0)'));
+
+    setPanel('translate3d(0,100.25%,0)');
 
     afterPaint(() => {
-      items.forEach((panel, index) => animatePanel(panel, 'translate3d(0,0,0)', 720, index * 30));
+      animatePanel('translate3d(0,0,0)', 720);
     });
 
     window.setTimeout(() => {
       window.location.href = href;
-    }, 940);
+    }, 760);
   };
 
   const shouldSkip = (link, event) => {
