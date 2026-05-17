@@ -5,6 +5,67 @@
 
   const markLoaded = () => document.body.classList.add('is-loaded');
 
+  const ensurePageTransition = () => {
+    let transition = document.querySelector('[data-page-transition]');
+    if (transition) return transition;
+    transition = document.createElement('div');
+    transition.className = 'page-transition';
+    transition.setAttribute('data-page-transition', '');
+    transition.setAttribute('aria-hidden', 'true');
+    transition.innerHTML = `
+      <div class="page-transition__panel page-transition__panel--one"></div>
+      <div class="page-transition__panel page-transition__panel--two"></div>
+      <div class="page-transition__content">
+        <span>Shopception</span>
+        <strong>Loading</strong>
+      </div>
+    `;
+    document.body.append(transition);
+    return transition;
+  };
+
+  const runPageEnter = () => {
+    const transition = ensurePageTransition();
+    if (reduceMotion) {
+      transition.classList.remove('is-active');
+      return;
+    }
+    transition.classList.add('is-active');
+    if (hasGSAP()) {
+      gsap.set(transition, { autoAlpha: 1, pointerEvents: 'auto' });
+      gsap.set('.page-transition__panel', { yPercent: 0 });
+      gsap.set('.page-transition__content', { y: 0, autoAlpha: 1 });
+      gsap.timeline({ defaults: { ease: 'power4.inOut' } })
+        .to('.page-transition__content', { y: -24, autoAlpha: 0, duration: .55, ease: 'power3.out' }, .12)
+        .to('.page-transition__panel--one', { yPercent: -100, duration: .95 }, .18)
+        .to('.page-transition__panel--two', { yPercent: 100, duration: .95 }, .26)
+        .set(transition, { autoAlpha: 0, pointerEvents: 'none' })
+        .call(() => transition.classList.remove('is-active'));
+    } else {
+      window.setTimeout(() => transition.classList.remove('is-active'), 900);
+    }
+  };
+
+  const runPageLeave = (href) => {
+    const transition = ensurePageTransition();
+    document.body.classList.add('is-leaving');
+    transition.classList.add('is-active');
+
+    if (hasGSAP() && !reduceMotion) {
+      gsap.set(transition, { autoAlpha: 1, pointerEvents: 'auto' });
+      gsap.set('.page-transition__panel--one', { yPercent: 100 });
+      gsap.set('.page-transition__panel--two', { yPercent: -100 });
+      gsap.set('.page-transition__content', { y: 24, autoAlpha: 0 });
+      gsap.timeline({ defaults: { ease: 'power4.inOut' } })
+        .to('.page-transition__panel--one', { yPercent: 0, duration: .72 }, 0)
+        .to('.page-transition__panel--two', { yPercent: 0, duration: .72 }, .07)
+        .to('.page-transition__content', { y: 0, autoAlpha: 1, duration: .45, ease: 'power3.out' }, .36)
+        .call(() => { window.location.href = href; });
+    } else {
+      window.location.href = href;
+    }
+  };
+
   const splitTextToLines = (element) => {
     if (!element || element.dataset.gsapSplit === 'true') return [];
     const text = element.textContent.trim().replace(/\s+/g, ' ');
@@ -243,12 +304,16 @@
 
   const initPageExit = () => {
     if (reduceMotion) return;
+    window.addEventListener('pageshow', () => document.body.classList.remove('is-leaving'));
     document.addEventListener('click', (event) => {
       const link = event.target.closest('a[href]');
       if (!link || link.target || link.hasAttribute('download')) return;
+      if (link.closest('[data-drawer]') || link.closest('.product-media-trigger')) return;
       const url = new URL(link.href, window.location.href);
-      if (url.origin !== window.location.origin || url.href === window.location.href || link.closest('.product-media-trigger')) return;
-      document.body.classList.add('is-leaving');
+      if (url.origin !== window.location.origin || url.href === window.location.href) return;
+      if (url.pathname === window.location.pathname && url.hash) return;
+      event.preventDefault();
+      runPageLeave(url.href);
     });
   };
 
@@ -277,7 +342,9 @@
   };
 
   const init = async () => {
+    ensurePageTransition();
     await buildLoader();
+    runPageEnter();
     initHeader();
     initMegaMenuMotion();
     initHero();
