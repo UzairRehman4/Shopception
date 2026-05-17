@@ -1,59 +1,87 @@
-<product-info class="product-page page-width" data-section-id="{{ section.id }}">
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign discount_percent = 0
+  if product.compare_at_price > product.price
+    assign discount_amount = product.compare_at_price | minus: product.price
+    assign discount_percent = discount_amount | times: 100 | divided_by: product.compare_at_price
+  endif
+-%}
+
+<product-info class="product-page product-page--premium page-width" data-section-id="{{ section.id }}">
   <script type="application/json" data-product-json>
     {{ product | json }}
   </script>
 
-  <div class="product-page__gallery" aria-label="{{ product.title | escape }}">
-    <div class="product-page__media">
-      {%- if product.media.size > 0 -%}
-        {%- for media in product.media -%}
-          <a class="product-page__media-item" id="ProductMedia-{{ section.id }}-{{ media.id }}" href="{{ media | image_url: width: 2200 }}" data-product-media-id="{{ media.id }}">
-            {{ media | image_url: width: 1400 | image_tag: widths: '550, 750, 1100, 1400', loading: 'lazy', sizes: '(min-width: 990px) 58vw, 100vw' }}
-          </a>
-        {%- endfor -%}
-      {%- else -%}
-        <div class="product-page__media-item">{{ 'product-1' | placeholder_svg_tag }}</div>
-      {%- endif -%}
-    </div>
-
-    {%- if product.media.size > 1 -%}
-      <nav class="product-page__thumbs" aria-label="{{ 'products.product.media_navigation' | t }}">
+  <div class="product-page__gallery product-gallery-premium" aria-label="{{ product.title | escape }}">
+    <div class="product-gallery-premium__rail">
+      {%- if product.media.size > 1 -%}
         {%- for media in product.media -%}
           <a href="#ProductMedia-{{ section.id }}-{{ media.id }}" aria-label="{{ 'products.product.view_media' | t: index: forloop.index }}">
             {{ media.preview_image | image_url: width: 160 | image_tag: widths: '80, 120, 160', loading: 'lazy' }}
           </a>
         {%- endfor -%}
-      </nav>
-    {%- endif -%}
+      {%- endif -%}
+    </div>
+
+    <div class="product-page__media product-gallery-premium__grid">
+      {%- if product.media.size > 0 -%}
+        {%- for media in product.media -%}
+          <button class="product-page__media-item product-media-trigger" type="button" id="ProductMedia-{{ section.id }}-{{ media.id }}" data-product-media-id="{{ media.id }}" data-media-src="{{ media.preview_image | image_url: width: 2200 }}" data-media-alt="{{ media.alt | default: product.title | escape }}">
+            {%- case media.media_type -%}
+              {%- when 'image' -%}
+                {{ media | image_url: width: 1500 | image_tag: widths: '550, 750, 1100, 1500', loading: 'lazy', sizes: '(min-width: 990px) 56vw, 100vw' }}
+              {%- when 'video' -%}
+                {{ media | video_tag: controls: false, autoplay: true, loop: true, muted: true, playsinline: true }}
+              {%- else -%}
+                {{ media.preview_image | image_url: width: 1500 | image_tag: widths: '550, 750, 1100, 1500', loading: 'lazy' }}
+            {%- endcase -%}
+            <span class="product-media-trigger__label">Expand</span>
+          </button>
+        {%- endfor -%}
+      {%- else -%}
+        <div class="product-page__media-item">{{ 'product-1' | placeholder_svg_tag }}</div>
+      {%- endif -%}
+    </div>
   </div>
 
   <div class="product-page__info">
-    <div class="product-page__panel">
+    <div class="product-page__panel product-buy-panel">
       <div class="product-page__heading">
-        {%- if product.vendor != blank -%}
-          <p class="eyebrow">{{ product.vendor }}</p>
-        {%- endif -%}
-        <h1 class="section__title">{{ product.title }}</h1>
+        <div class="product-page__micro-row">
+          {%- if product.vendor != blank -%}<p class="eyebrow">{{ product.vendor }}</p>{%- endif -%}
+          {%- if discount_percent > 0 -%}<span class="product-sale-pill">Save {{ discount_percent }}%</span>{%- endif -%}
+        </div>
+        <h1 class="section__title product-page__title">{{ product.title }}</h1>
         <div data-product-price>
           {%- render 'price', product: product -%}
         </div>
       </div>
 
-      <div class="product-page__status" data-stock-status>
-        {%- if product.selected_or_first_available_variant.available -%}
-          {{ 'products.product.in_stock' | t }}
+      <div class="product-page__status product-page__status--{% if current_variant.available %}in{% else %}out{% endif %}" data-stock-status>
+        {%- if current_variant.available -%}
+          {{ section.settings.in_stock_text }}
         {%- else -%}
-          {{ 'products.product.sold_out' | t }}
+          {{ section.settings.sold_out_text }}
         {%- endif -%}
       </div>
 
+      {%- if section.settings.show_countdown and section.settings.countdown_date != blank -%}
+        <div class="premium-countdown premium-countdown--product" data-countdown="{{ section.settings.countdown_date | escape }}">
+          <span>{{ section.settings.countdown_label }}</span>
+          <div><strong data-days>00</strong><small>D</small></div>
+          <div><strong data-hours>00</strong><small>H</small></div>
+          <div><strong data-minutes>00</strong><small>M</small></div>
+          <div><strong data-seconds>00</strong><small>S</small></div>
+        </div>
+      {%- endif -%}
+
       {%- if product.description != blank -%}
-        <div class="product-page__description">{{ product.description }}</div>
+        <div class="product-page__description product-page__description--short">{{ product.description | strip_html | truncate: 180 }}</div>
       {%- endif -%}
 
       <product-form>
         {%- form 'product', product, class: 'product-form' -%}
-          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
+          <input type="hidden" name="id" value="{{ current_variant.id }}" data-variant-id>
 
           {%- unless product.has_only_default_variant -%}
             <div class="variant-picker">
@@ -62,12 +90,7 @@
                   <legend>{{ option.name }}</legend>
                   <div class="variant-picker__values">
                     {%- for value in option.values -%}
-                      <button
-                        type="button"
-                        class="variant-picker__button"
-                        data-option-value="{{ value | escape }}"
-                        aria-pressed="{% if option.selected_value == value %}true{% else %}false{% endif %}"
-                      >
+                      <button type="button" class="variant-picker__button" data-option-value="{{ value | escape }}" aria-pressed="{% if option.selected_value == value %}true{% else %}false{% endif %}">
                         {{ value }}
                       </button>
                     {%- endfor -%}
@@ -83,8 +106,8 @@
               <input id="Quantity-{{ section.id }}" type="number" name="quantity" value="1" min="1">
             </label>
 
-            <button class="button product-form__submit" type="submit" data-add-to-cart {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-              {%- if product.selected_or_first_available_variant.available -%}
+            <button class="button product-form__submit" type="submit" data-add-to-cart {% unless current_variant.available %}disabled{% endunless %}>
+              {%- if current_variant.available -%}
                 {{ 'products.product.add_to_cart' | t }}
               {%- else -%}
                 {{ 'products.product.sold_out' | t }}
@@ -96,10 +119,10 @@
         {%- endform -%}
       </product-form>
 
-      <div class="product-page__trust">
-        <span>{{ 'products.product.trust.shipping' | t }}</span>
-        <span>{{ 'products.product.trust.returns' | t }}</span>
-        <span>{{ 'products.product.trust.secure' | t }}</span>
+      <div class="product-page__trust product-page__trust--premium">
+        <span>{{ section.settings.trust_1 }}</span>
+        <span>{{ section.settings.trust_2 }}</span>
+        <span>{{ section.settings.trust_3 }}</span>
       </div>
 
       <div class="product-page__accordions">
@@ -121,27 +144,38 @@
           <summary>{{ 'products.product.size_fit' | t }}</summary>
           <div>{{ section.settings.size_text }}</div>
         </details>
+        <details>
+          <summary>{{ section.settings.care_heading }}</summary>
+          <div>{{ section.settings.care_text }}</div>
+        </details>
       </div>
     </div>
   </div>
 </product-info>
 
+<div class="product-media-modal" data-product-media-modal hidden>
+  <button class="product-media-modal__close" type="button" data-product-media-close>Close</button>
+  <div class="product-media-modal__stage">
+    <img src="" alt="" data-product-media-modal-image>
+  </div>
+</div>
+
 {% schema %}
 {
   "name": "Main product",
   "settings": [
-    {
-      "type": "richtext",
-      "id": "shipping_text",
-      "label": "Shipping text",
-      "default": "<p>Ships within 2-5 business days. Add your merchant-specific shipping policy here.</p>"
-    },
-    {
-      "type": "richtext",
-      "id": "size_text",
-      "label": "Size and fit text",
-      "default": "<p>Add fit notes, model sizing, and a size chart link here.</p>"
-    }
+    { "type": "text", "id": "in_stock_text", "label": "In stock text", "default": "In stock — ready to ship" },
+    { "type": "text", "id": "sold_out_text", "label": "Sold out text", "default": "Out of stock" },
+    { "type": "checkbox", "id": "show_countdown", "label": "Show product countdown", "default": true },
+    { "type": "text", "id": "countdown_label", "label": "Countdown label", "default": "Drop ends in" },
+    { "type": "text", "id": "countdown_date", "label": "Countdown date", "info": "Use format: 2026-12-31T23:59:00", "default": "2026-12-31T23:59:00" },
+    { "type": "text", "id": "trust_1", "label": "Trust item 1", "default": "Free shipping over $75" },
+    { "type": "text", "id": "trust_2", "label": "Trust item 2", "default": "Easy 14-day returns" },
+    { "type": "text", "id": "trust_3", "label": "Trust item 3", "default": "Secure checkout" },
+    { "type": "richtext", "id": "shipping_text", "label": "Shipping text", "default": "<p>Ships within 2-5 business days. Add your merchant-specific shipping policy here.</p>" },
+    { "type": "richtext", "id": "size_text", "label": "Size and fit text", "default": "<p>Add fit notes, model sizing, and a size chart link here.</p>" },
+    { "type": "text", "id": "care_heading", "label": "Care accordion heading", "default": "Care & materials" },
+    { "type": "richtext", "id": "care_text", "label": "Care text", "default": "<p>Add material composition, wash instructions, and premium care notes here.</p>" }
   ]
 }
 {% endschema %}
