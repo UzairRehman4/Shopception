@@ -6,6 +6,9 @@
     <meta name="theme-color" content="{{ settings.color_background }}">
 
     <link rel="canonical" href="{{ canonical_url }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bayon&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
     {%- if settings.favicon != blank -%}
       <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
@@ -35,8 +38,8 @@
         --color-accent: {{ settings.color_accent }};
         --color-surface: {{ settings.color_surface }};
         --color-ink-soft: {{ settings.color_ink_soft }};
-        --font-body: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
-        --font-heading: {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
+        --font-body: 'Inter', {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+        --font-heading: 'Bayon', {{ settings.type_heading_font.family }}, {{ settings.type_heading_font.fallback_families }};
       }
     </style>
 
@@ -63,6 +66,8 @@
       };
     </script>
     <script src="{{ 'theme.js' | asset_url }}" defer="defer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js" defer="defer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js" defer="defer"></script>
     <script src="{{ 'premium-2026.js' | asset_url }}" defer="defer"></script>
   </head>
 
