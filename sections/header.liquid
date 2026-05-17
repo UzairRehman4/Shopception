@@ -98,31 +98,86 @@
 
   <div class="drawer drawer--right" id="search-drawer" data-drawer hidden>
     <div class="drawer__overlay" data-drawer-close></div>
-    <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="{{ 'general.search.search' | t }}" tabindex="-1">
-      <div class="drawer__header">
-        <strong>{{ 'general.search.search' | t }}</strong>
-        <button class="icon-button" type="button" data-drawer-close>
+    <div class="drawer__panel premium-search" role="dialog" aria-modal="true" aria-label="{{ 'general.search.search' | t }}" tabindex="-1">
+      <div class="drawer__header premium-drawer-header">
+        <div>
+          <span class="premium-drawer-kicker">Discover</span>
+          <strong>{{ 'general.search.search' | t }}</strong>
+        </div>
+        <button class="icon-button premium-close" type="button" data-drawer-close>
           <span aria-hidden="true">Close</span>
           <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
         </button>
       </div>
 
-      <form action="{{ routes.search_url }}" method="get" role="search" class="drawer__search">
-        <label class="form-field">
-          <span>{{ 'general.search.search' | t }}</span>
-          <input type="search" name="q" autocomplete="off">
+      <form action="{{ routes.search_url }}" method="get" role="search" class="premium-search__form" data-predictive-search-form>
+        <label class="premium-search__field">
+          <span>{{ section.settings.search_placeholder }}</span>
+          <input type="search" name="q" autocomplete="off" placeholder="{{ section.settings.search_input_placeholder }}" data-predictive-search-input>
         </label>
-        <button class="button" type="submit">{{ 'general.search.submit' | t }}</button>
+        <button class="button premium-search__submit" type="submit">{{ 'general.search.submit' | t }}</button>
       </form>
+
+      <div class="premium-search__body">
+        <section class="premium-search__panel" data-previous-searches hidden>
+          <div class="premium-search__section-head">
+            <span>Recent</span>
+            <button type="button" data-clear-searches>Clear</button>
+          </div>
+          <div class="premium-search__chips" data-previous-searches-list></div>
+        </section>
+
+        <section class="premium-search__panel" data-predictive-search-results hidden>
+          <div class="premium-search__section-head"><span>Results</span></div>
+          <div class="premium-search__results" data-predictive-search-list></div>
+        </section>
+
+        <section class="premium-search__panel" data-search-recommendations>
+          <div class="premium-search__section-head"><span>{{ section.settings.search_recommendations_title }}</span></div>
+          <div class="premium-search__recommendations">
+            {%- if section.settings.search_products != blank -%}
+              {%- for product in section.settings.search_products -%}
+                <article class="premium-search-product">
+                  <a href="{{ product.url }}" class="premium-search-product__media">
+                    {%- if product.featured_image -%}
+                      {{ product.featured_image | image_url: width: 220 | image_tag: widths: '110, 180, 220', loading: 'lazy', alt: product.title }}
+                    {%- endif -%}
+                  </a>
+                  <div>
+                    <a href="{{ product.url }}" class="premium-search-product__title">{{ product.title }}</a>
+                    <span>{{ product.price | money }}</span>
+                    {%- if product.available and product.has_only_default_variant -%}
+                      <product-form>
+                        {%- form 'product', product, class: 'premium-search-product__form' -%}
+                          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                          <input type="hidden" name="quantity" value="1">
+                          <button class="premium-mini-button" type="submit" data-add-to-cart>Add</button>
+                        {%- endform -%}
+                      </product-form>
+                    {%- else -%}
+                      <a class="premium-mini-button" href="{{ product.url }}">View</a>
+                    {%- endif -%}
+                  </div>
+                </article>
+              {%- endfor -%}
+            {%- else -%}
+              <a class="premium-search__empty-link" href="{{ routes.all_products_collection_url }}">Browse all products</a>
+            {%- endif -%}
+          </div>
+        </section>
+      </div>
     </div>
   </div>
 
   <div class="drawer drawer--right" id="cart-drawer" data-drawer hidden>
     <div class="drawer__overlay" data-drawer-close></div>
-    <div class="drawer__panel cart-drawer" role="dialog" aria-modal="true" aria-label="{{ 'templates.cart.cart' | t }}" tabindex="-1">
-      <div class="drawer__header">
-        <strong>{{ 'templates.cart.cart' | t }}</strong>
-        <button class="icon-button" type="button" data-drawer-close>
+    <div class="drawer__panel cart-drawer premium-cart" role="dialog" aria-modal="true" aria-label="{{ 'templates.cart.cart' | t }}" tabindex="-1">
+      <div class="drawer__header premium-drawer-header">
+        <div>
+          <span class="premium-drawer-kicker">Bag</span>
+          <strong>{{ 'templates.cart.cart' | t }}</strong>
+        </div>
+        <button class="icon-button premium-close" type="button" data-drawer-close>
           <span aria-hidden="true">Close</span>
           <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
         </button>
@@ -131,16 +186,16 @@
       <div class="cart-drawer__body" data-cart-drawer-body>
         <div class="cart-drawer__items" data-cart-drawer-items>
           {%- if cart.empty? -%}
-            <div class="empty-state cart-drawer__empty">
+            <div class="empty-state cart-drawer__empty premium-cart-empty">
               <p>{{ 'templates.cart.empty' | t }}</p>
               <a class="button" href="{{ routes.all_products_collection_url }}">{{ 'general.continue_shopping' | t }}</a>
             </div>
           {%- else -%}
             {%- for item in cart.items -%}
-              <article class="cart-drawer__item">
+              <article class="cart-drawer__item premium-cart-item">
                 <a class="cart-drawer__image" href="{{ item.url }}">
                   {%- if item.image -%}
-                    {{ item.image | image_url: width: 180 | image_tag: widths: '90, 140, 180', loading: 'lazy', alt: item.product.title }}
+                    {{ item.image | image_url: width: 220 | image_tag: widths: '90, 140, 220', loading: 'lazy', alt: item.product.title }}
                   {%- endif -%}
                 </a>
                 <div>
@@ -155,9 +210,41 @@
             {%- endfor -%}
           {%- endif -%}
         </div>
+
+        {%- if section.settings.cart_products != blank -%}
+          <section class="premium-cart-recommendations">
+            <div class="premium-search__section-head"><span>{{ section.settings.cart_recommendations_title }}</span></div>
+            <div class="premium-cart-recommendations__grid">
+              {%- for product in section.settings.cart_products limit: 3 -%}
+                <article class="premium-search-product premium-search-product--compact">
+                  <a href="{{ product.url }}" class="premium-search-product__media">
+                    {%- if product.featured_image -%}
+                      {{ product.featured_image | image_url: width: 180 | image_tag: widths: '90, 140, 180', loading: 'lazy', alt: product.title }}
+                    {%- endif -%}
+                  </a>
+                  <div>
+                    <a href="{{ product.url }}" class="premium-search-product__title">{{ product.title }}</a>
+                    <span>{{ product.price | money }}</span>
+                    {%- if product.available and product.has_only_default_variant -%}
+                      <product-form>
+                        {%- form 'product', product, class: 'premium-search-product__form' -%}
+                          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                          <input type="hidden" name="quantity" value="1">
+                          <button class="premium-mini-button" type="submit" data-add-to-cart>Add</button>
+                        {%- endform -%}
+                      </product-form>
+                    {%- else -%}
+                      <a class="premium-mini-button" href="{{ product.url }}">View</a>
+                    {%- endif -%}
+                  </div>
+                </article>
+              {%- endfor -%}
+            </div>
+          </section>
+        {%- endif -%}
       </div>
 
-      <form class="cart-drawer__footer" action="{{ routes.cart_url }}" method="post" data-cart-drawer-footer {% if cart.empty? %}hidden{% endif %}>
+      <form class="cart-drawer__footer premium-cart-footer" action="{{ routes.cart_url }}" method="post" data-cart-drawer-footer {% if cart.empty? %}hidden{% endif %}>
         <label class="form-field">
           <span>{{ 'templates.cart.note' | t }}</span>
           <textarea name="note" rows="3">{{ cart.note }}</textarea>
@@ -177,52 +264,20 @@
 {
   "name": "Header",
   "settings": [
-    {
-      "type": "image_picker",
-      "id": "logo",
-      "label": "Logo"
-    },
-    {
-      "type": "link_list",
-      "id": "menu",
-      "label": "Menu",
-      "default": "main-menu"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_announcement",
-      "label": "Show announcement bar",
-      "default": true
-    },
-    {
-      "type": "text",
-      "id": "announcement_text",
-      "label": "Announcement text",
-      "default": "Free shipping on orders over $75"
-    },
-    {
-      "type": "url",
-      "id": "announcement_link",
-      "label": "Announcement link"
-    },
-    {
-      "type": "text",
-      "id": "mega_eyebrow",
-      "label": "Mega menu eyebrow",
-      "default": "Curated edit"
-    },
-    {
-      "type": "text",
-      "id": "mega_heading",
-      "label": "Mega menu heading",
-      "default": "Shop the season"
-    },
-    {
-      "type": "textarea",
-      "id": "mega_text",
-      "label": "Mega menu text",
-      "default": "Use nested menu links to create a polished navigation experience for collections, campaigns, and product categories."
-    }
+    { "type": "image_picker", "id": "logo", "label": "Logo" },
+    { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
+    { "type": "checkbox", "id": "show_announcement", "label": "Show announcement bar", "default": true },
+    { "type": "text", "id": "announcement_text", "label": "Announcement text", "default": "Free shipping on orders over $75" },
+    { "type": "url", "id": "announcement_link", "label": "Announcement link" },
+    { "type": "text", "id": "mega_eyebrow", "label": "Mega menu eyebrow", "default": "Curated edit" },
+    { "type": "text", "id": "mega_heading", "label": "Mega menu heading", "default": "Shop the season" },
+    { "type": "textarea", "id": "mega_text", "label": "Mega menu text", "default": "Use nested menu links to create a polished navigation experience for collections, campaigns, and product categories." },
+    { "type": "text", "id": "search_placeholder", "label": "Search label", "default": "Search the collection" },
+    { "type": "text", "id": "search_input_placeholder", "label": "Search input placeholder", "default": "Type product, color, style..." },
+    { "type": "text", "id": "search_recommendations_title", "label": "Search recommendations title", "default": "Recommended for you" },
+    { "type": "product_list", "id": "search_products", "label": "Search recommended products", "limit": 6 },
+    { "type": "text", "id": "cart_recommendations_title", "label": "Cart recommendations title", "default": "Complete the look" },
+    { "type": "product_list", "id": "cart_products", "label": "Cart recommended products", "limit": 3 }
   ]
 }
 {% endschema %}
