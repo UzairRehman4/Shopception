@@ -18,3 +18,4 @@ shopify theme check
 - Merchant-editable sections and settings
 - Minimal JavaScript
 - Lazy-loaded product imagery
+"# Shopception" 
