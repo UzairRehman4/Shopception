@@ -1,0 +1,85 @@
+<section class="section collection-story">
+  <div class="page-width">
+    <div class="section__header">
+      <h2 class="section__title">{{ section.settings.heading }}</h2>
+    </div>
+
+    <div class="collection-story__grid">
+      {%- for block in section.blocks -%}
+        <a class="collection-story__card" href="{{ block.settings.link | default: routes.all_products_collection_url }}" {{ block.shopify_attributes }}>
+          <div class="collection-story__media">
+            {%- if block.settings.image != blank -%}
+              {{ block.settings.image | image_url: width: 1200 | image_tag: widths: '450, 750, 1000, 1200', loading: 'lazy', sizes: '(min-width: 750px) 33vw, 100vw' }}
+            {%- endif -%}
+          </div>
+          <div class="collection-story__content">
+            <p class="eyebrow">{{ block.settings.eyebrow }}</p>
+            <h3 class="collection-story__title">{{ block.settings.heading }}</h3>
+            <span>{{ block.settings.link_label }}</span>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection story cards",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Shop by mood"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "card",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "text",
+          "id": "eyebrow",
+          "label": "Eyebrow",
+          "default": "01"
+        },
+        {
+          "type": "text",
+          "id": "heading",
+          "label": "Heading",
+          "default": "Tailored layers"
+        },
+        {
+          "type": "text",
+          "id": "link_label",
+          "label": "Link label",
+          "default": "Shop now"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Link"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 3,
+  "presets": [
+    {
+      "name": "Collection story cards",
+      "blocks": [
+        { "type": "card" },
+        { "type": "card" },
+        { "type": "card" }
+      ]
+    }
+  ]
+}
+{% endschema %}

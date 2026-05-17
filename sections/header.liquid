@@ -1,0 +1,228 @@
+<header class="site-header" data-section-id="{{ section.id }}">
+  {%- if section.settings.show_announcement and section.settings.announcement_text != blank -%}
+    <div class="announcement-bar">
+      <div class="announcement-bar__inner page-width">
+        {%- if section.settings.announcement_link != blank -%}
+          <a href="{{ section.settings.announcement_link }}">{{ section.settings.announcement_text }}</a>
+        {%- else -%}
+          <p>{{ section.settings.announcement_text }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+  {%- endif -%}
+
+  <div class="site-header__inner page-width">
+    <button class="icon-button site-header__menu-button" type="button" data-drawer-open="menu-drawer" aria-controls="menu-drawer" aria-expanded="false">
+      <span class="icon-button__lines" aria-hidden="true"></span>
+      <span class="visually-hidden">{{ 'sections.header.open_menu' | t }}</span>
+    </button>
+
+    <a class="site-header__logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+      {%- if section.settings.logo != blank -%}
+        {{ section.settings.logo | image_url: width: 220 | image_tag: widths: '110, 160, 220', loading: 'eager', alt: shop.name }}
+      {%- else -%}
+        {{ shop.name }}
+      {%- endif -%}
+    </a>
+
+    {%- if section.settings.menu != blank -%}
+      <nav class="site-header__nav" aria-label="{{ 'sections.header.navigation' | t }}">
+        {%- for link in section.settings.menu.links -%}
+          <div class="site-header__nav-item">
+            <a href="{{ link.url }}">{{ link.title }}</a>
+            {%- if link.links != blank -%}
+              <div class="site-header__submenu">
+                <div class="site-header__submenu-inner page-width">
+                  <div class="site-header__submenu-feature">
+                    <p class="eyebrow">{{ section.settings.mega_eyebrow }}</p>
+                    <strong>{{ section.settings.mega_heading }}</strong>
+                    <span>{{ section.settings.mega_text }}</span>
+                  </div>
+                  <div class="site-header__submenu-links">
+                    {%- for child_link in link.links -%}
+                      <a href="{{ child_link.url }}">{{ child_link.title }}</a>
+                    {%- endfor -%}
+                  </div>
+                </div>
+              </div>
+            {%- endif -%}
+          </div>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+
+    <div class="site-header__actions">
+      <button class="icon-button" type="button" data-drawer-open="search-drawer" aria-controls="search-drawer" aria-expanded="false">
+        <span aria-hidden="true">Search</span>
+        <span class="visually-hidden">{{ 'general.search.search' | t }}</span>
+      </button>
+      <button class="icon-button" type="button" data-cart-trigger data-drawer-open="cart-drawer" aria-controls="cart-drawer" aria-expanded="false" aria-label="{{ 'templates.cart.cart' | t }}">
+        Cart
+        <span aria-hidden="true">(<span data-cart-count>{{ cart.item_count }}</span>)</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="drawer" id="menu-drawer" data-drawer hidden>
+    <div class="drawer__overlay" data-drawer-close></div>
+    <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="{{ 'sections.header.mobile_menu' | t }}" tabindex="-1">
+      <div class="drawer__header">
+        <strong>{{ shop.name }}</strong>
+        <button class="icon-button" type="button" data-drawer-close>
+          <span aria-hidden="true">Close</span>
+          <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+        </button>
+      </div>
+
+      {%- if section.settings.menu != blank -%}
+        <nav class="drawer__nav" aria-label="{{ 'sections.header.mobile_menu' | t }}">
+          {%- for link in section.settings.menu.links -%}
+            {%- if link.links != blank -%}
+              <details>
+                <summary>{{ link.title }}</summary>
+                <div class="drawer__subnav">
+                  <a href="{{ link.url }}">{{ 'sections.header.view_all' | t: title: link.title }}</a>
+                  {%- for child_link in link.links -%}
+                    <a href="{{ child_link.url }}">{{ child_link.title }}</a>
+                  {%- endfor -%}
+                </div>
+              </details>
+            {%- else -%}
+              <a href="{{ link.url }}">{{ link.title }}</a>
+            {%- endif -%}
+          {%- endfor -%}
+        </nav>
+      {%- endif -%}
+    </div>
+  </div>
+
+  <div class="drawer drawer--right" id="search-drawer" data-drawer hidden>
+    <div class="drawer__overlay" data-drawer-close></div>
+    <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="{{ 'general.search.search' | t }}" tabindex="-1">
+      <div class="drawer__header">
+        <strong>{{ 'general.search.search' | t }}</strong>
+        <button class="icon-button" type="button" data-drawer-close>
+          <span aria-hidden="true">Close</span>
+          <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+        </button>
+      </div>
+
+      <form action="{{ routes.search_url }}" method="get" role="search" class="drawer__search">
+        <label class="form-field">
+          <span>{{ 'general.search.search' | t }}</span>
+          <input type="search" name="q" autocomplete="off">
+        </label>
+        <button class="button" type="submit">{{ 'general.search.submit' | t }}</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="drawer drawer--right" id="cart-drawer" data-drawer hidden>
+    <div class="drawer__overlay" data-drawer-close></div>
+    <div class="drawer__panel cart-drawer" role="dialog" aria-modal="true" aria-label="{{ 'templates.cart.cart' | t }}" tabindex="-1">
+      <div class="drawer__header">
+        <strong>{{ 'templates.cart.cart' | t }}</strong>
+        <button class="icon-button" type="button" data-drawer-close>
+          <span aria-hidden="true">Close</span>
+          <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+        </button>
+      </div>
+
+      <div class="cart-drawer__body" data-cart-drawer-body>
+        <div class="cart-drawer__items" data-cart-drawer-items>
+          {%- if cart.empty? -%}
+            <div class="empty-state cart-drawer__empty">
+              <p>{{ 'templates.cart.empty' | t }}</p>
+              <a class="button" href="{{ routes.all_products_collection_url }}">{{ 'general.continue_shopping' | t }}</a>
+            </div>
+          {%- else -%}
+            {%- for item in cart.items -%}
+              <article class="cart-drawer__item">
+                <a class="cart-drawer__image" href="{{ item.url }}">
+                  {%- if item.image -%}
+                    {{ item.image | image_url: width: 180 | image_tag: widths: '90, 140, 180', loading: 'lazy', alt: item.product.title }}
+                  {%- endif -%}
+                </a>
+                <div>
+                  <a class="cart-drawer__title" href="{{ item.url }}">{{ item.product.title }}</a>
+                  {%- unless item.product.has_only_default_variant -%}
+                    <p>{{ item.variant.title }}</p>
+                  {%- endunless -%}
+                  <p>{{ 'products.product.quantity' | t }}: {{ item.quantity }}</p>
+                </div>
+                <strong>{{ item.final_line_price | money }}</strong>
+              </article>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+      </div>
+
+      <form class="cart-drawer__footer" action="{{ routes.cart_url }}" method="post" data-cart-drawer-footer {% if cart.empty? %}hidden{% endif %}>
+        <label class="form-field">
+          <span>{{ 'templates.cart.note' | t }}</span>
+          <textarea name="note" rows="3">{{ cart.note }}</textarea>
+        </label>
+        <div class="cart-drawer__subtotal">
+          <span>{{ 'templates.cart.subtotal' | t }}</span>
+          <strong data-cart-subtotal>{{ cart.total_price | money }}</strong>
+        </div>
+        <button class="button" type="submit" name="checkout">{{ 'templates.cart.checkout' | t }}</button>
+        <a class="button button--secondary" href="{{ routes.cart_url }}">{{ 'templates.cart.view_cart' | t }}</a>
+      </form>
+    </div>
+  </div>
+</header>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Show announcement bar",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement_text",
+      "label": "Announcement text",
+      "default": "Free shipping on orders over $75"
+    },
+    {
+      "type": "url",
+      "id": "announcement_link",
+      "label": "Announcement link"
+    },
+    {
+      "type": "text",
+      "id": "mega_eyebrow",
+      "label": "Mega menu eyebrow",
+      "default": "Curated edit"
+    },
+    {
+      "type": "text",
+      "id": "mega_heading",
+      "label": "Mega menu heading",
+      "default": "Shop the season"
+    },
+    {
+      "type": "textarea",
+      "id": "mega_text",
+      "label": "Mega menu text",
+      "default": "Use nested menu links to create a polished navigation experience for collections, campaigns, and product categories."
+    }
+  ]
+}
+{% endschema %}

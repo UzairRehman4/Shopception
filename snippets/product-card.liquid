@@ -1,0 +1,40 @@
+<article class="product-card">
+  <a class="product-card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+    <div class="product-card__badges">
+      {%- unless product.available -%}
+        <span>{{ 'products.product.sold_out' | t }}</span>
+      {%- elsif product.compare_at_price > product.price -%}
+        <span>{{ 'products.product.sale' | t }}</span>
+      {%- endunless -%}
+    </div>
+
+    {%- if product.featured_media -%}
+      {{ product.featured_media | image_url: width: 900 | image_tag: widths: '300, 450, 600, 900', loading: 'lazy', sizes: '(min-width: 750px) 25vw, 50vw' }}
+    {%- else -%}
+      {{ 'product-1' | placeholder_svg_tag }}
+    {%- endif -%}
+  </a>
+
+  <div class="product-card__info">
+    <h3 class="product-card__title">
+      <a href="{{ product.url }}">{{ product.title }}</a>
+    </h3>
+    {%- render 'price', product: product -%}
+
+    <div class="product-card__actions">
+      {%- if product.available and product.has_only_default_variant -%}
+        <product-form>
+          {%- form 'product', product, class: 'product-card__form' -%}
+            <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            <input type="hidden" name="quantity" value="1">
+            <button class="button button--secondary product-card__button" type="submit" data-add-to-cart>
+              {{ 'products.product.quick_add' | t }}
+            </button>
+          {%- endform -%}
+        </product-form>
+      {%- else -%}
+        <a class="button button--secondary product-card__button" href="{{ product.url }}">{{ 'products.product.choose_options' | t }}</a>
+      {%- endif -%}
+    </div>
+  </div>
+</article>

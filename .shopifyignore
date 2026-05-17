@@ -1,0 +1,6 @@
+.git/*
+.github/*
+node_modules/*
+media/*
+README.md
+PROJECT_BRIEF.md

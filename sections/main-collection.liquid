@@ -1,0 +1,142 @@
+<section class="section collection-page">
+  <div class="page-width">
+    <div class="section__header">
+      <div>
+        <h1 class="section__title">{{ collection.title }}</h1>
+        {%- if collection.description != blank -%}
+          <div>{{ collection.description }}</div>
+        {%- endif -%}
+      </div>
+
+      <button class="button button--secondary" type="button" data-drawer-open="collection-filters" aria-controls="collection-filters" aria-expanded="false">
+        {{ 'sections.collection.filter_sort' | t }}
+      </button>
+    </div>
+
+    {%- paginate collection.products by section.settings.products_per_page -%}
+      {%- if collection.products.size > 0 -%}
+        <div class="collection-toolbar">
+          <p>{{ 'sections.collection.product_count' | t: count: collection.products_count }}</p>
+
+          {%- if collection.filters.size > 0 -%}
+            <div class="active-filters">
+              {%- for filter in collection.filters -%}
+                {%- for value in filter.active_values -%}
+                  <a href="{{ value.url_to_remove }}">{{ value.label }} <span aria-hidden="true">x</span></a>
+                {%- endfor -%}
+                {%- if filter.type == 'price_range' -%}
+                  {%- if filter.min_value.value != blank or filter.max_value.value != blank -%}
+                    <a href="{{ filter.url_to_remove }}">
+                      {{ filter.min_value.value | money | default: 0 }} - {{ filter.max_value.value | money | default: filter.range_max | money }}
+                      <span aria-hidden="true">x</span>
+                    </a>
+                  {%- endif -%}
+                {%- endif -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+
+        <div class="product-grid">
+          {%- for product in collection.products -%}
+            {%- render 'product-card', product: product -%}
+          {%- endfor -%}
+        </div>
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="section" aria-label="{{ 'general.pagination.label' | t }}">
+            {{ paginate | default_pagination }}
+          </nav>
+        {%- endif -%}
+      {%- else -%}
+        <div class="empty-state">
+          <h2>{{ 'sections.collection.empty' | t }}</h2>
+          <a class="button" href="{{ routes.all_products_collection_url }}">{{ 'general.continue_shopping' | t }}</a>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+
+  <div class="drawer drawer--right" id="collection-filters" data-drawer hidden>
+    <div class="drawer__overlay" data-drawer-close></div>
+    <div class="drawer__panel" role="dialog" aria-modal="true" aria-label="{{ 'sections.collection.filter_sort' | t }}" tabindex="-1">
+      <div class="drawer__header">
+        <strong>{{ 'sections.collection.filter_sort' | t }}</strong>
+        <button class="icon-button" type="button" data-drawer-close>
+          <span aria-hidden="true">Close</span>
+          <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+        </button>
+      </div>
+
+      <form class="filter-form" method="get">
+        <div class="filter-group">
+          <label for="SortBy-{{ section.id }}">{{ 'sections.collection.sort_by' | t }}</label>
+          <select id="SortBy-{{ section.id }}" name="sort_by">
+            {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+            {%- for option in collection.sort_options -%}
+              <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>
+            {%- endfor -%}
+          </select>
+        </div>
+
+        {%- for filter in collection.filters -%}
+          <details class="filter-group" open>
+            <summary>{{ filter.label }}</summary>
+
+            {%- case filter.type -%}
+              {%- when 'list' -%}
+                <div class="filter-group__values">
+                  {%- for value in filter.values -%}
+                    <label class="filter-choice">
+                      <input
+                        type="checkbox"
+                        name="{{ value.param_name }}"
+                        value="{{ value.value }}"
+                        {% if value.active %}checked{% endif %}
+                        {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                      >
+                      <span>{{ value.label }}</span>
+                      <small>{{ value.count }}</small>
+                    </label>
+                  {%- endfor -%}
+                </div>
+              {%- when 'price_range' -%}
+                <div class="filter-price">
+                  <label>
+                    <span>{{ 'sections.collection.min_price' | t }}</span>
+                    <input type="number" name="{{ filter.min_value.param_name }}" value="{{ filter.min_value.value | divided_by: 100 }}" min="0" max="{{ filter.range_max | divided_by: 100 }}">
+                  </label>
+                  <label>
+                    <span>{{ 'sections.collection.max_price' | t }}</span>
+                    <input type="number" name="{{ filter.max_value.param_name }}" value="{{ filter.max_value.value | divided_by: 100 }}" min="0" max="{{ filter.range_max | divided_by: 100 }}">
+                  </label>
+                </div>
+            {%- endcase -%}
+          </details>
+        {%- endfor -%}
+
+        <div class="filter-form__actions">
+          <button class="button" type="submit">{{ 'sections.collection.apply' | t }}</button>
+          <a class="button button--secondary" href="{{ collection.url }}">{{ 'sections.collection.clear' | t }}</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 24,
+      "step": 4,
+      "label": "Products per page",
+      "default": 16
+    }
+  ]
+}
+{% endschema %}

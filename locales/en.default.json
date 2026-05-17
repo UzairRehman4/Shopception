@@ -1,0 +1,87 @@
+{
+  "accessibility": {
+    "close": "Close",
+    "skip_to_content": "Skip to content"
+  },
+  "general": {
+    "continue_shopping": "Continue shopping",
+    "meta": {
+      "page": "Page {{ page }}"
+    },
+    "pagination": {
+      "label": "Pagination"
+    },
+    "search": {
+      "search": "Search",
+      "submit": "Submit search",
+      "no_results": "No results found"
+    }
+  },
+  "onboarding": {
+    "product_title": "Product title"
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to cart",
+      "choose_options": "Choose options",
+      "details": "Details",
+      "in_stock": "In stock",
+      "media_navigation": "Product media",
+      "no_description": "Product details will appear here.",
+      "price": {
+        "from_price_html": "From {{ price }}"
+      },
+      "quantity": "Quantity",
+      "quick_add": "Quick add",
+      "regular_price": "Regular price",
+      "sale": "Sale",
+      "sale_price": "Sale price",
+      "shipping": "Shipping",
+      "size_fit": "Size and fit",
+      "sold_out": "Sold out",
+      "trust": {
+        "returns": "Easy returns",
+        "secure": "Secure checkout",
+        "shipping": "Fast shipping"
+      },
+      "unavailable": "Unavailable",
+      "view_media": "View media {{ index }}",
+      "variant": "Variant"
+    }
+  },
+  "sections": {
+    "collection": {
+      "apply": "Apply",
+      "clear": "Clear",
+      "empty": "No products found",
+      "filter_sort": "Filter and sort",
+      "max_price": "Max",
+      "min_price": "Min",
+      "product_count": "{{ count }} products",
+      "sort_by": "Sort by"
+    },
+    "featured_collection": {
+      "view_all": "View all"
+    },
+    "footer": {
+      "navigation": "Footer navigation"
+    },
+    "header": {
+      "mobile_menu": "Mobile menu",
+      "open_menu": "Open menu",
+      "navigation": "Main navigation",
+      "view_all": "View all {{ title }}"
+    }
+  },
+  "templates": {
+    "cart": {
+      "cart": "Cart",
+      "checkout": "Checkout",
+      "empty": "Your cart is empty",
+      "note": "Order note",
+      "subtotal": "Subtotal",
+      "update": "Update cart",
+      "view_cart": "View cart"
+    }
+  }
+}

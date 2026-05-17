@@ -1,0 +1,42 @@
+<section class="section">
+  <div class="page-width">
+    <h1 class="section__title">{{ 'templates.cart.cart' | t }}</h1>
+
+    {%- if cart.empty? -%}
+      <div class="empty-state">
+        <p>{{ 'templates.cart.empty' | t }}</p>
+        <a class="button" href="{{ routes.all_products_collection_url }}">{{ 'general.continue_shopping' | t }}</a>
+      </div>
+    {%- else -%}
+      <form action="{{ routes.cart_url }}" method="post">
+        {%- for item in cart.items -%}
+          <article class="section__header">
+            <div>
+              <a href="{{ item.url }}">{{ item.product.title }}</a>
+              <p>{{ item.variant.title }}</p>
+              <label class="form-field">
+                {{ 'products.product.quantity' | t }}
+                <input type="number" name="updates[]" value="{{ item.quantity }}" min="0">
+              </label>
+            </div>
+            <strong>{{ item.final_line_price | money }}</strong>
+          </article>
+        {%- endfor -%}
+
+        <div class="section__header">
+          <strong>{{ 'templates.cart.subtotal' | t }}</strong>
+          <strong>{{ cart.total_price | money }}</strong>
+        </div>
+
+        <button class="button button--secondary" type="submit" name="update">{{ 'templates.cart.update' | t }}</button>
+        <button class="button" type="submit" name="checkout">{{ 'templates.cart.checkout' | t }}</button>
+      </form>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main cart"
+}
+{% endschema %}

@@ -1,0 +1,147 @@
+<product-info class="product-page page-width" data-section-id="{{ section.id }}">
+  <script type="application/json" data-product-json>
+    {{ product | json }}
+  </script>
+
+  <div class="product-page__gallery" aria-label="{{ product.title | escape }}">
+    <div class="product-page__media">
+      {%- if product.media.size > 0 -%}
+        {%- for media in product.media -%}
+          <a class="product-page__media-item" id="ProductMedia-{{ section.id }}-{{ media.id }}" href="{{ media | image_url: width: 2200 }}" data-product-media-id="{{ media.id }}">
+            {{ media | image_url: width: 1400 | image_tag: widths: '550, 750, 1100, 1400', loading: 'lazy', sizes: '(min-width: 990px) 58vw, 100vw' }}
+          </a>
+        {%- endfor -%}
+      {%- else -%}
+        <div class="product-page__media-item">{{ 'product-1' | placeholder_svg_tag }}</div>
+      {%- endif -%}
+    </div>
+
+    {%- if product.media.size > 1 -%}
+      <nav class="product-page__thumbs" aria-label="{{ 'products.product.media_navigation' | t }}">
+        {%- for media in product.media -%}
+          <a href="#ProductMedia-{{ section.id }}-{{ media.id }}" aria-label="{{ 'products.product.view_media' | t: index: forloop.index }}">
+            {{ media.preview_image | image_url: width: 160 | image_tag: widths: '80, 120, 160', loading: 'lazy' }}
+          </a>
+        {%- endfor -%}
+      </nav>
+    {%- endif -%}
+  </div>
+
+  <div class="product-page__info">
+    <div class="product-page__panel">
+      <div class="product-page__heading">
+        {%- if product.vendor != blank -%}
+          <p class="eyebrow">{{ product.vendor }}</p>
+        {%- endif -%}
+        <h1 class="section__title">{{ product.title }}</h1>
+        <div data-product-price>
+          {%- render 'price', product: product -%}
+        </div>
+      </div>
+
+      <div class="product-page__status" data-stock-status>
+        {%- if product.selected_or_first_available_variant.available -%}
+          {{ 'products.product.in_stock' | t }}
+        {%- else -%}
+          {{ 'products.product.sold_out' | t }}
+        {%- endif -%}
+      </div>
+
+      {%- if product.description != blank -%}
+        <div class="product-page__description">{{ product.description }}</div>
+      {%- endif -%}
+
+      <product-form>
+        {%- form 'product', product, class: 'product-form' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}" data-variant-id>
+
+          {%- unless product.has_only_default_variant -%}
+            <div class="variant-picker">
+              {%- for option in product.options_with_values -%}
+                <fieldset class="variant-picker__group" data-option-index="{{ forloop.index0 }}">
+                  <legend>{{ option.name }}</legend>
+                  <div class="variant-picker__values">
+                    {%- for value in option.values -%}
+                      <button
+                        type="button"
+                        class="variant-picker__button"
+                        data-option-value="{{ value | escape }}"
+                        aria-pressed="{% if option.selected_value == value %}true{% else %}false{% endif %}"
+                      >
+                        {{ value }}
+                      </button>
+                    {%- endfor -%}
+                  </div>
+                </fieldset>
+              {%- endfor -%}
+            </div>
+          {%- endunless -%}
+
+          <div class="product-form__row">
+            <label class="quantity-field" for="Quantity-{{ section.id }}">
+              <span>{{ 'products.product.quantity' | t }}</span>
+              <input id="Quantity-{{ section.id }}" type="number" name="quantity" value="1" min="1">
+            </label>
+
+            <button class="button product-form__submit" type="submit" data-add-to-cart {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+              {%- if product.selected_or_first_available_variant.available -%}
+                {{ 'products.product.add_to_cart' | t }}
+              {%- else -%}
+                {{ 'products.product.sold_out' | t }}
+              {%- endif -%}
+            </button>
+          </div>
+
+          {{ form | payment_button }}
+        {%- endform -%}
+      </product-form>
+
+      <div class="product-page__trust">
+        <span>{{ 'products.product.trust.shipping' | t }}</span>
+        <span>{{ 'products.product.trust.returns' | t }}</span>
+        <span>{{ 'products.product.trust.secure' | t }}</span>
+      </div>
+
+      <div class="product-page__accordions">
+        <details open>
+          <summary>{{ 'products.product.details' | t }}</summary>
+          <div>
+            {%- if product.description != blank -%}
+              {{ product.description }}
+            {%- else -%}
+              <p>{{ 'products.product.no_description' | t }}</p>
+            {%- endif -%}
+          </div>
+        </details>
+        <details>
+          <summary>{{ 'products.product.shipping' | t }}</summary>
+          <div>{{ section.settings.shipping_text }}</div>
+        </details>
+        <details>
+          <summary>{{ 'products.product.size_fit' | t }}</summary>
+          <div>{{ section.settings.size_text }}</div>
+        </details>
+      </div>
+    </div>
+  </div>
+</product-info>
+
+{% schema %}
+{
+  "name": "Main product",
+  "settings": [
+    {
+      "type": "richtext",
+      "id": "shipping_text",
+      "label": "Shipping text",
+      "default": "<p>Ships within 2-5 business days. Add your merchant-specific shipping policy here.</p>"
+    },
+    {
+      "type": "richtext",
+      "id": "size_text",
+      "label": "Size and fit text",
+      "default": "<p>Add fit notes, model sizing, and a size chart link here.</p>"
+    }
+  ]
+}
+{% endschema %}

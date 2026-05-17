@@ -1,0 +1,137 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "eyebrow": "Atelier 2026",
+        "heading": "Modern pieces with a quiet editorial edge",
+        "text": "A premium fashion storefront built for strong imagery, fast discovery, and collection-led storytelling.",
+        "button_label": "Shop the drop",
+        "button_link": "/collections/all"
+      }
+    },
+    "editorial_split": {
+      "type": "editorial-split",
+      "settings": {
+        "image_position": "left",
+        "eyebrow": "The edit",
+        "heading": "Campaign storytelling without slowing the shop",
+        "text": "Pair rich seasonal imagery with clear buying paths. Every media slot is controlled from the theme editor so merchants can swap campaigns without touching code.",
+        "button_label": "Explore collection",
+        "button_link": "/collections/all"
+      }
+    },
+    "collection_story": {
+      "type": "collection-story",
+      "blocks": {
+        "card_1": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "01",
+            "heading": "Tailored layers",
+            "link_label": "Shop layers",
+            "link": "/collections/all"
+          }
+        },
+        "card_2": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "02",
+            "heading": "Soft neutrals",
+            "link_label": "Shop neutrals",
+            "link": "/collections/all"
+          }
+        },
+        "card_3": {
+          "type": "card",
+          "settings": {
+            "eyebrow": "03",
+            "heading": "Evening ease",
+            "link_label": "Shop evening",
+            "link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "card_1",
+        "card_2",
+        "card_3"
+      ],
+      "settings": {
+        "heading": "Shop by mood"
+      }
+    },
+    "promo_mosaic": {
+      "type": "promo-mosaic",
+      "blocks": {
+        "tile_1": {
+          "type": "tile",
+          "settings": {
+            "size": "large",
+            "eyebrow": "Drop 01",
+            "heading": "Modern tailoring",
+            "text": "Refined silhouette work for day and night.",
+            "link_label": "Shop tailoring",
+            "link": "/collections/all"
+          }
+        },
+        "tile_2": {
+          "type": "tile",
+          "settings": {
+            "size": "small",
+            "eyebrow": "Drop 02",
+            "heading": "Lounge essentials",
+            "text": "Soft textures with polished fits.",
+            "link_label": "Shop essentials",
+            "link": "/collections/all"
+          }
+        },
+        "tile_3": {
+          "type": "tile",
+          "settings": {
+            "size": "small",
+            "eyebrow": "Drop 03",
+            "heading": "Evening layers",
+            "text": "Elevated pieces for after-dark edits.",
+            "link_label": "Shop evening",
+            "link": "/collections/all"
+          }
+        }
+      },
+      "block_order": [
+        "tile_1",
+        "tile_2",
+        "tile_3"
+      ],
+      "settings": {
+        "heading": "Merchandising moments"
+      }
+    },
+    "featured_collection": {
+      "type": "featured-collection",
+      "settings": {
+        "heading": "Latest arrivals",
+        "collection": "all",
+        "products_to_show": 4
+      }
+    },
+    "lookbook_band": {
+      "type": "lookbook-band",
+      "settings": {
+        "eyebrow": "Lookbook",
+        "heading": "Make every collection feel like a launch",
+        "text": "Use this cinematic band for fashion drops, seasonal campaigns, and visual merchandising that deserves the full screen.",
+        "button_label": "View the edit",
+        "button_link": "/collections/all"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "editorial_split",
+    "collection_story",
+    "promo_mosaic",
+    "featured_collection"
+    ,"lookbook_band"
+  ]
+}

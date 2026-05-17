@@ -1,0 +1,14 @@
+{%- assign target = product.selected_or_first_available_variant -%}
+
+<div class="price">
+  {%- if product.price_varies -%}
+    {{ 'products.product.price.from_price_html' | t: price: product.price_min | money }}
+  {%- elsif target.compare_at_price > target.price -%}
+    <span class="visually-hidden">{{ 'products.product.sale_price' | t }}</span>
+    <span>{{ target.price | money }}</span>
+    <span class="visually-hidden">{{ 'products.product.regular_price' | t }}</span>
+    <s>{{ target.compare_at_price | money }}</s>
+  {%- else -%}
+    {{ target.price | money }}
+  {%- endif -%}
+</div>
