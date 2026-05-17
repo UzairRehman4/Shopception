@@ -1,7 +1,11 @@
-<section class="lookbook-band">
+<section class="lookbook-band" style="--lookbook-overlay-opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};">
   <div class="lookbook-band__media">
-    {%- if section.settings.image != blank -%}
+    {%- if section.settings.video != blank -%}
+      {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata' }}
+    {%- elsif section.settings.image != blank -%}
       {{ section.settings.image | image_url: width: 2400 | image_tag: widths: '750, 1100, 1500, 2000, 2400', loading: 'lazy', sizes: '100vw' }}
+    {%- else -%}
+      {{ 'lifestyle-1' | placeholder_svg_tag }}
     {%- endif -%}
   </div>
 
@@ -16,9 +20,23 @@
       <p class="lookbook-band__text">{{ section.settings.text }}</p>
     {%- endif -%}
 
-    {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
-      <a class="button" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+    {%- if section.settings.show_countdown and section.settings.countdown_date != blank -%}
+      <div class="premium-countdown" data-countdown="{{ section.settings.countdown_date | escape }}">
+        <div><strong data-days>00</strong><span>Days</span></div>
+        <div><strong data-hours>00</strong><span>Hours</span></div>
+        <div><strong data-minutes>00</strong><span>Minutes</span></div>
+        <div><strong data-seconds>00</strong><span>Seconds</span></div>
+      </div>
     {%- endif -%}
+
+    <div class="lookbook-band__buttons">
+      {%- if section.settings.button_label != blank and section.settings.button_link != blank -%}
+        <a class="button" href="{{ section.settings.button_link }}">{{ section.settings.button_label }}</a>
+      {%- endif -%}
+      {%- if section.settings.secondary_button_label != blank and section.settings.secondary_button_link != blank -%}
+        <a class="button button--secondary" href="{{ section.settings.secondary_button_link }}">{{ section.settings.secondary_button_label }}</a>
+      {%- endif -%}
+    </div>
   </div>
 </section>
 
@@ -26,45 +44,21 @@
 {
   "name": "Lookbook band",
   "settings": [
-    {
-      "type": "image_picker",
-      "id": "image",
-      "label": "Image"
-    },
-    {
-      "type": "text",
-      "id": "eyebrow",
-      "label": "Eyebrow",
-      "default": "Campaign"
-    },
-    {
-      "type": "text",
-      "id": "heading",
-      "label": "Heading",
-      "default": "A cinematic layer for seasonal storytelling"
-    },
-    {
-      "type": "textarea",
-      "id": "text",
-      "label": "Text",
-      "default": "Use a strong campaign image here. The layout is designed for fashion drops, lookbooks, and collection launches."
-    },
-    {
-      "type": "text",
-      "id": "button_label",
-      "label": "Button label",
-      "default": "View lookbook"
-    },
-    {
-      "type": "url",
-      "id": "button_link",
-      "label": "Button link"
-    }
+    { "type": "image_picker", "id": "image", "label": "Fallback image" },
+    { "type": "video", "id": "video", "label": "Background video" },
+    { "type": "range", "id": "overlay_opacity", "min": 0, "max": 85, "step": 5, "unit": "%", "label": "Overlay opacity", "default": 50 },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Campaign" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "A cinematic layer for seasonal storytelling" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Use a strong campaign image or video here. The layout is designed for fashion drops, lookbooks, and collection launches." },
+    { "type": "checkbox", "id": "show_countdown", "label": "Show countdown", "default": true },
+    { "type": "text", "id": "countdown_date", "label": "Countdown date", "info": "Use format: 2026-12-31T23:59:00", "default": "2026-12-31T23:59:00" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "View lookbook" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "text", "id": "secondary_button_label", "label": "Secondary button label", "default": "Shop the drop" },
+    { "type": "url", "id": "secondary_button_link", "label": "Secondary button link" }
   ],
   "presets": [
-    {
-      "name": "Lookbook band"
-    }
+    { "name": "Lookbook band" }
   ]
 }
 {% endschema %}
