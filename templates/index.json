@@ -1,8 +1,18 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "hero",
       "settings": {
+        "image": "shopify://shop_images/add44c00070f835dec1c4c75ead8145b129208c3.png",
         "eyebrow": "Atelier 2026",
         "heading": "Modern pieces with a quiet editorial edge",
         "text": "A premium fashion storefront built for strong imagery, fast discovery, and collection-led storytelling.",
@@ -131,7 +141,7 @@
     "editorial_split",
     "collection_story",
     "promo_mosaic",
-    "featured_collection"
-    ,"lookbook_band"
+    "featured_collection",
+    "lookbook_band"
   ]
 }
