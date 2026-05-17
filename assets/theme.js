@@ -266,7 +266,7 @@ class ThemeDrawer {
 
     window.setTimeout(() => {
       this.drawer.hidden = true;
-    }, 180);
+    }, 650);
   }
 }
 
