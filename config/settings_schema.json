@@ -54,6 +54,22 @@
         "id": "color_ink_soft",
         "label": "Soft dark",
         "default": "#2d2823"
+      },
+      {
+        "type": "header",
+        "content": "Page transition"
+      },
+      {
+        "type": "color",
+        "id": "transition_color_primary",
+        "label": "Transition primary color",
+        "default": "#17120e"
+      },
+      {
+        "type": "color",
+        "id": "transition_color_secondary",
+        "label": "Transition secondary color",
+        "default": "#241b15"
       }
     ]
   }
