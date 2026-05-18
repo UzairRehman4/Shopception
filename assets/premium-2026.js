@@ -77,7 +77,7 @@
 
   const initTextReveals = () => {
     if (!hasGSAP() || reduceMotion) {
-      qsa('.section, .product-card, .collection-story__card, .promo-mosaic__tile, .hero__content, .lookbook-band__content').forEach((item) => item.classList.add('is-visible'));
+      qsa('.section, .premium-brand-lab, .product-card, .collection-story__card, .promo-mosaic__tile, .hero__content, .lookbook-band__content').forEach((item) => item.classList.add('is-visible'));
       markLoaded();
       return;
     }
@@ -88,7 +88,7 @@
       if (!words.length) return;
       gsap.fromTo(words, { yPercent: 105, opacity: 0 }, { yPercent: 0, opacity: 1, duration: .78, stagger: .018, ease: 'power4.out', scrollTrigger: { trigger: heading, start: 'top 84%', once: true } });
     });
-    qsa('.section, .product-card, .collection-story__card, .promo-mosaic__tile, .hero__content, .lookbook-band__content').forEach((item) => item.classList.add('is-visible'));
+    qsa('.section, .premium-brand-lab, .product-card, .collection-story__card, .promo-mosaic__tile, .hero__content, .lookbook-band__content').forEach((item) => item.classList.add('is-visible'));
   };
 
   const initProductCards = () => {
@@ -169,9 +169,13 @@
     const recommendations = document.querySelector('[data-search-recommendations]');
     const previousWrap = document.querySelector('[data-previous-searches]');
     const previousList = document.querySelector('[data-previous-searches-list]');
+    const suggestionsWrap = document.querySelector('[data-search-suggestions]');
+    const suggestionsList = document.querySelector('[data-search-suggestions-list]');
+    const discovery = document.querySelector('[data-search-discovery]');
     const clearBtn = document.querySelector('[data-clear-searches]');
     let timer;
     const resetButton = form.querySelector('[data-search-reset]');
+    const suggestionTerms = ['tops', 'bottoms', 'accessories', 'new drops', 'socks', 'black', 'red', 'oversized', 'premium diamond', 'gift', 'limited'];
     const getPrevious = () => JSON.parse(localStorage.getItem('shopceptionSearches') || '[]');
     const saveSearch = (term) => {
       const value = term.trim();
@@ -190,6 +194,7 @@
       if (!resultsWrap || !resultsList) return;
       resultsWrap.hidden = products.length === 0;
       if (recommendations) recommendations.hidden = products.length > 0;
+      if (discovery) discovery.hidden = products.length > 0;
       resultsList.innerHTML = products.map((product) => `
         <article class="flowbit-search-card">
           <a class="flowbit-search-card__link" href="${product.url}"><span class="visually-hidden">${product.title}</span></a>
@@ -198,11 +203,22 @@
         </article>
       `).join('');
     };
+    const renderSuggestions = (term = '') => {
+      if (!suggestionsWrap || !suggestionsList) return;
+      const value = term.trim().toLowerCase();
+      const items = suggestionTerms
+        .filter((candidate) => !value || candidate.includes(value) || value.includes(candidate))
+        .slice(0, 6);
+      suggestionsWrap.hidden = items.length === 0 || value.length < 1;
+      suggestionsList.innerHTML = items.map((item) => `<button type="button" data-search-term="${item}">${item}</button>`).join('');
+    };
     const search = async (term) => {
       const q = term.trim();
+      renderSuggestions(q);
       if (q.length < 2) {
         if (resultsWrap) resultsWrap.hidden = true;
         if (recommendations) recommendations.hidden = false;
+        if (discovery) discovery.hidden = false;
         return;
       }
       try {
@@ -235,8 +251,17 @@
       input.value = chip.dataset.searchChip;
       search(input.value);
     });
+    form.addEventListener('click', (event) => {
+      const termButton = event.target.closest('[data-search-term]');
+      if (!termButton || !input) return;
+      input.value = termButton.dataset.searchTerm || termButton.textContent.trim();
+      if (resetButton) resetButton.hidden = input.value.trim().length === 0;
+      search(input.value);
+      input.focus();
+    });
     clearBtn?.addEventListener('click', () => { localStorage.removeItem('shopceptionSearches'); renderPrevious(); });
     renderPrevious();
+    renderSuggestions('');
   };
 
   const initSearchFocus = () => {
@@ -290,8 +315,264 @@
     update();
   };
 
+  const initAnimatedBackdrops = () => {
+    const targets = qsa('.home-premium-slider, .premium-brand-lab, .collection-story, .promo-mosaic, .protect-marquee, .premium-footer');
+    targets.forEach((target, index) => target.style.setProperty('--svg-drift', `${index % 2 === 0 ? 1 : -1}`));
+    if (!hasGSAP() || reduceMotion) return;
+
+    targets.forEach((target, index) => {
+      gsap.to(target, {
+        '--svg-y': `${index % 2 === 0 ? -56 : 56}px`,
+        '--svg-rotate': `${index % 2 === 0 ? 5 : -5}deg`,
+        '--svg-scale': 1.08,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: target,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true
+        }
+      });
+    });
+  };
+
+  const initPremiumScrollEffects = () => {
+    if (!hasGSAP() || reduceMotion) return;
+    gsap.registerPlugin(ScrollTrigger);
+
+    qsa('.premium-brand-lab__point, .premium-brand-lab__stats div, .promo-mosaic__tile, .collection-story__card').forEach((item, index) => {
+      gsap.fromTo(item, {
+        y: 46,
+        opacity: 0,
+        rotate: index % 2 === 0 ? -.6 : .6
+      }, {
+        y: 0,
+        opacity: 1,
+        rotate: 0,
+        duration: .9,
+        ease: 'power4.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 88%',
+          once: true
+        }
+      });
+    });
+
+    qsa('.premium-brand-lab__intro, .section__header').forEach((item) => {
+      gsap.fromTo(item, { clipPath: 'inset(0 18% 0 0)', opacity: .2 }, {
+        clipPath: 'inset(0 0% 0 0)',
+        opacity: 1,
+        duration: 1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 86%',
+          once: true
+        }
+      });
+    });
+  };
+
+  const initCategoryEdit = () => {
+    qsa('[data-category-edit]').forEach((section) => {
+      const tabs = qsa('[data-category-tab]', section);
+      const panels = qsa('[data-category-panel]', section);
+      if (!tabs.length || !panels.length) return;
+
+      const activate = (targetId) => {
+        tabs.forEach((tab) => tab.classList.toggle('is-active', tab.getAttribute('href') === `#${targetId}`));
+        panels.forEach((panel) => {
+          const active = panel.id === targetId;
+          panel.classList.toggle('is-active', active);
+          if (active && hasGSAP() && !reduceMotion) {
+            gsap.fromTo(panel.querySelectorAll('.category-product-edit__item, .category-product-edit__panel-head > *'), {
+              y: 22,
+              opacity: 0
+            }, {
+              y: 0,
+              opacity: 1,
+              duration: .55,
+              stagger: .045,
+              ease: 'power3.out'
+            });
+          }
+        });
+      };
+
+      tabs.forEach((tab) => {
+        tab.addEventListener('click', (event) => {
+          const id = tab.getAttribute('href')?.replace('#', '');
+          if (!id) return;
+          event.preventDefault();
+          activate(id);
+        });
+      });
+    });
+  };
+
+  const initCollectionLayouts = () => {
+    const grid = document.querySelector('[data-collection-grid]');
+    if (!grid) return;
+    const buttons = qsa('[data-grid-mode]');
+    const label = document.querySelector('[data-layout-label]');
+    const randomize = document.querySelector('[data-grid-randomize]');
+    const cells = qsa('.collection-product-cell', grid);
+    const labels = {
+      clean: 'Clean grid',
+      dense: 'Dense scan',
+      editorial: 'Editorial rhythm',
+      mosaic: 'Mosaic sizes'
+    };
+
+    const applyMode = (mode) => {
+      const nextMode = labels[mode] ? mode : 'clean';
+      grid.dataset.gridModeCurrent = nextMode;
+      grid.classList.remove('is-clean', 'is-dense', 'is-editorial', 'is-mosaic');
+      grid.classList.add(`is-${nextMode}`);
+      buttons.forEach((button) => {
+        const active = button.dataset.gridMode === nextMode;
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+      });
+      if (label) label.textContent = labels[nextMode];
+      localStorage.setItem('premiumCollectionLayout', nextMode);
+      if (hasGSAP() && !reduceMotion) {
+        gsap.fromTo(cells, { y: 18, opacity: .72 }, { y: 0, opacity: 1, stagger: .018, duration: .42, ease: 'power3.out' });
+        window.setTimeout(() => ScrollTrigger?.refresh(), 150);
+      }
+    };
+
+    const applyPattern = (seed = Date.now()) => {
+      cells.forEach((cell, index) => {
+        const value = (index + seed) % 9;
+        cell.classList.remove('is-wide', 'is-tall', 'is-feature');
+        if (value === 0) cell.classList.add('is-feature');
+        if (value === 2 || value === 6) cell.classList.add('is-wide');
+        if (value === 4 || value === 7) cell.classList.add('is-tall');
+      });
+    };
+
+    buttons.forEach((button) => button.addEventListener('click', () => applyMode(button.dataset.gridMode)));
+    randomize?.addEventListener('click', () => {
+      applyMode('mosaic');
+      applyPattern(Math.floor(Math.random() * 100));
+    });
+
+    applyPattern(0);
+    applyMode(localStorage.getItem('premiumCollectionLayout') || 'clean');
+  };
+
+  const initPremiumProductWall = () => {
+    qsa('[data-product-wall]').forEach((wall) => {
+      const grid = wall.querySelector('[data-wall-grid]');
+      const cells = qsa('[data-wall-cell]', wall);
+      const filterButtons = qsa('[data-wall-filter]', wall);
+      const viewButtons = qsa('[data-wall-view]', wall);
+      const sortButton = wall.querySelector('[data-wall-sort]');
+      const quickView = wall.querySelector('[data-premium-quick-view]');
+      let priceAscending = true;
+
+      const animateCells = () => {
+        if (!hasGSAP() || reduceMotion) return;
+        gsap.fromTo(cells.filter((cell) => !cell.hidden), { y: 18, opacity: .55 }, { y: 0, opacity: 1, stagger: .025, duration: .46, ease: 'power3.out' });
+      };
+
+      filterButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const filter = button.dataset.wallFilter || 'all';
+          filterButtons.forEach((item) => item.classList.toggle('is-active', item === button));
+          cells.forEach((cell) => {
+            const card = cell.querySelector('[data-product-card]');
+            const haystack = `${card?.dataset.productType || ''} ${card?.dataset.productTitle || ''}`.toLowerCase();
+            cell.hidden = filter !== 'all' && !haystack.includes(filter);
+          });
+          animateCells();
+        });
+      });
+
+      viewButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          const view = button.dataset.wallView || 'editorial';
+          grid?.classList.remove('is-editorial', 'is-grid', 'is-compact');
+          grid?.classList.add(`is-${view}`);
+          viewButtons.forEach((item) => {
+            const active = item === button;
+            item.classList.toggle('is-active', active);
+            item.setAttribute('aria-pressed', String(active));
+          });
+          animateCells();
+          if (hasGSAP()) window.setTimeout(() => ScrollTrigger?.refresh(), 120);
+        });
+      });
+
+      sortButton?.addEventListener('click', () => {
+        const sorted = [...cells].sort((a, b) => {
+          const aPrice = Number(a.querySelector('[data-product-card]')?.dataset.productPrice || 0);
+          const bPrice = Number(b.querySelector('[data-product-card]')?.dataset.productPrice || 0);
+          return priceAscending ? aPrice - bPrice : bPrice - aPrice;
+        });
+        priceAscending = !priceAscending;
+        sortButton.textContent = priceAscending ? 'Sort price' : 'Price high';
+        sorted.forEach((cell) => grid?.append(cell));
+        animateCells();
+      });
+
+      qsa('[data-wishlist-toggle]', wall).forEach((button) => {
+        button.addEventListener('click', () => {
+          button.classList.toggle('is-active');
+          button.querySelector('span')?.replaceChildren(button.classList.contains('is-active') ? '♥' : '♡');
+        });
+      });
+
+      if (!quickView) return;
+      const image = quickView.querySelector('[data-quick-view-image]');
+      const title = quickView.querySelector('[data-quick-view-title]');
+      const price = quickView.querySelector('[data-quick-view-price]');
+      const type = quickView.querySelector('[data-quick-view-type]');
+      const available = quickView.querySelector('[data-quick-view-available]');
+      const link = quickView.querySelector('[data-quick-view-link]');
+      const panel = quickView.querySelector('.premium-quick-view__panel');
+
+      const closeQuickView = () => {
+        const done = () => {
+          quickView.hidden = true;
+          document.body.classList.remove('drawer-open');
+        };
+        if (hasGSAP() && !reduceMotion) gsap.to(quickView, { opacity: 0, duration: .22, ease: 'power2.out', onComplete: done });
+        else done();
+      };
+
+      qsa('[data-quick-view]', wall).forEach((button) => {
+        button.addEventListener('click', () => {
+          if (image) {
+            image.src = button.dataset.image || '';
+            image.alt = button.dataset.title || '';
+          }
+          title?.replaceChildren(button.dataset.title || '');
+          price?.replaceChildren(button.dataset.price || '');
+          type?.replaceChildren(button.dataset.type || 'Product');
+          available?.replaceChildren(button.dataset.available || '');
+          if (link) link.href = button.dataset.url || '#';
+          quickView.hidden = false;
+          document.body.classList.add('drawer-open');
+          panel?.focus();
+          if (hasGSAP() && !reduceMotion) {
+            gsap.fromTo(quickView, { opacity: 0 }, { opacity: 1, duration: .24, ease: 'power2.out' });
+            gsap.fromTo(panel, { y: 28, scale: .97 }, { y: 0, scale: 1, duration: .55, ease: 'power4.out' });
+          }
+        });
+      });
+
+      qsa('[data-quick-view-close]', quickView).forEach((button) => button.addEventListener('click', closeQuickView));
+      document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape' && !quickView.hidden) closeQuickView();
+      });
+    });
+  };
+
   const initFallbackReveal = () => {
-    const items = qsa('.section, .product-card, .collection-story__card, .promo-mosaic__tile, .hero__content, .lookbook-band__content');
+    const items = qsa('.section, .premium-brand-lab, .product-card, .collection-story__card, .promo-mosaic__tile, .hero__content, .lookbook-band__content');
     if (!items.length || hasGSAP()) return;
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -316,6 +597,11 @@
     initSearchFocus();
     initPointerGlow();
     initPremiumScroll();
+    initAnimatedBackdrops();
+    initPremiumScrollEffects();
+    initCategoryEdit();
+    initCollectionLayouts();
+    initPremiumProductWall();
     initFallbackReveal();
     if (hasGSAP()) window.setTimeout(() => ScrollTrigger.refresh(), 400);
   };

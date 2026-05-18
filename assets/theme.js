@@ -217,6 +217,106 @@ const themeCart = {
   }
 };
 
+const themeWishlist = {
+  key: 'premiumDiamondWishlist',
+
+  get() {
+    return JSON.parse(localStorage.getItem(this.key) || '[]');
+  },
+
+  set(items) {
+    localStorage.setItem(this.key, JSON.stringify([...new Set(items)].slice(0, 80)));
+  },
+
+  toggle(handle) {
+    const items = this.get();
+    const exists = items.includes(handle);
+    this.set(exists ? items.filter((item) => item !== handle) : [handle, ...items]);
+    return !exists;
+  },
+
+  init() {
+    document.querySelectorAll('[data-wishlist-toggle]').forEach((button) => {
+      const card = button.closest('[data-product-card]');
+      const handle = button.dataset.productHandle || card?.dataset.productHandle || card?.dataset.productTitle;
+      if (!handle) return;
+      const active = this.get().includes(handle);
+      button.classList.toggle('is-active', active);
+      button.setAttribute('aria-pressed', String(active));
+      button.querySelector('span')?.replaceChildren(active ? '♥' : '♡');
+    });
+  }
+};
+
+const themeQuickView = {
+  open(button) {
+    const quickView = document.querySelector('[data-premium-quick-view]');
+    if (!quickView || !button) {
+      const url = button?.dataset.url;
+      if (url) window.location.href = url;
+      return;
+    }
+
+    const image = quickView.querySelector('[data-quick-view-image]');
+    const title = quickView.querySelector('[data-quick-view-title]');
+    const price = quickView.querySelector('[data-quick-view-price]');
+    const type = quickView.querySelector('[data-quick-view-type]');
+    const available = quickView.querySelector('[data-quick-view-available]');
+    const link = quickView.querySelector('[data-quick-view-link]');
+    const panel = quickView.querySelector('.premium-quick-view__panel');
+
+    if (image) {
+      image.src = button.dataset.image || '';
+      image.alt = button.dataset.title || '';
+    }
+    title?.replaceChildren(button.dataset.title || '');
+    price?.replaceChildren(button.dataset.price || '');
+    type?.replaceChildren(button.dataset.type || 'Product');
+    available?.replaceChildren(button.dataset.available || '');
+    if (link) link.href = button.dataset.url || '#';
+    quickView.hidden = false;
+    document.body.classList.add('drawer-open');
+    panel?.focus();
+  },
+
+  close() {
+    const quickView = document.querySelector('[data-premium-quick-view]');
+    if (!quickView) return;
+    quickView.hidden = true;
+    document.body.classList.remove('drawer-open');
+  },
+
+  init() {
+    document.addEventListener('click', (event) => {
+      const wishlist = event.target.closest('[data-wishlist-toggle]');
+      if (wishlist) {
+        const card = wishlist.closest('[data-product-card]');
+        const handle = wishlist.dataset.productHandle || card?.dataset.productHandle || card?.dataset.productTitle;
+        if (!handle) return;
+        const active = themeWishlist.toggle(handle);
+        wishlist.classList.toggle('is-active', active);
+        wishlist.setAttribute('aria-pressed', String(active));
+        wishlist.querySelector('span')?.replaceChildren(active ? '♥' : '♡');
+        return;
+      }
+
+      const quick = event.target.closest('[data-quick-view]');
+      if (quick) {
+        this.open(quick);
+        return;
+      }
+
+      if (event.target.closest('[data-quick-view-close]')) this.close();
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') this.close();
+    });
+
+    themeWishlist.init();
+  }
+};
+
 class ProductForm extends HTMLElement {
   connectedCallback() {
     this.form = this.querySelector('form');
@@ -224,13 +324,30 @@ class ProductForm extends HTMLElement {
 
     if (!this.form || !this.button) return;
 
+    this.variantSelect = this.form.querySelector('[data-card-variant-select]');
+    this.defaultText = this.button.textContent.trim();
+    this.variantSelect?.addEventListener('change', () => this.syncVariantState());
+    this.syncVariantState();
     this.form.addEventListener('submit', this.onSubmit.bind(this));
+  }
+
+  syncVariantState() {
+    if (!this.variantSelect || !this.button) return;
+    const option = this.variantSelect.selectedOptions[0];
+    const available = option?.dataset.available !== 'false' && !option?.disabled;
+    this.button.disabled = !available;
+    this.button.textContent = available
+      ? this.defaultText || window.theme?.strings?.addToCart || 'Add to cart'
+      : window.theme?.strings?.soldOut || 'Sold out';
   }
 
   async onSubmit(event) {
     event.preventDefault();
 
-    const originalText = this.button.textContent;
+    this.syncVariantState();
+    if (this.button.disabled) return;
+
+    const originalText = this.defaultText || this.button.textContent;
     this.button.setAttribute('aria-busy', 'true');
     this.button.disabled = true;
     this.animateToCart();
@@ -238,29 +355,42 @@ class ProductForm extends HTMLElement {
     try {
       const response = await fetch('/cart/add.js', {
         method: 'POST',
-        headers: { Accept: 'application/json' },
+        headers: {
+          Accept: 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
         body: new FormData(this.form)
       });
 
-      if (!response.ok) throw new Error('Unable to add item to cart');
+      if (!response.ok) throw new Error(`Unable to add item to cart (${response.status})`);
 
       const item = await response.json();
       this.button.textContent = 'Added';
       this.button.classList.add('is-added');
       themeCart.flash(item.product_title);
-      await themeCart.refresh(true);
+      try {
+        await themeCart.refresh(true);
+      } catch (refreshError) {
+        console.warn(refreshError.message);
+        document.querySelectorAll('[data-cart-count]').forEach((count) => {
+          const current = Number(count.textContent || 0);
+          if (!Number.isNaN(current)) count.textContent = current + Number(new FormData(this.form).get('quantity') || 1);
+        });
+      }
     } catch (error) {
       this.button.textContent = originalText;
       this.dispatchEvent(new CustomEvent('theme:error', {
         bubbles: true,
         detail: { message: error.message }
       }));
+      console.warn(error.message);
+      themeCart.flash('Could not add item. Please try again.');
     } finally {
       window.setTimeout(() => {
         this.button.textContent = originalText;
         this.button.classList.remove('is-added');
         this.button.removeAttribute('aria-busy');
-        this.button.disabled = false;
+        this.syncVariantState();
       }, 700);
     }
   }
@@ -337,4 +467,8 @@ document.querySelectorAll('[data-drawer-open]').forEach((trigger) => {
     const drawer = drawers.get(trigger.getAttribute('data-drawer-open'));
     drawer?.open(trigger);
   });
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  themeQuickView.init();
 });

@@ -1,20 +1,50 @@
 <section class="home-premium-slider" data-home-slider>
+  <canvas class="home-premium-slider__webgl" data-hero-webgl aria-hidden="true"></canvas>
   <div class="home-premium-slider__slides">
     {%- for block in section.blocks -%}
       {%- liquid
         assign product = block.settings.product
         assign current_variant = product.selected_or_first_available_variant
+        assign slide_collection = block.settings.collection
+        assign cta_link = block.settings.button_link
+        if cta_link == blank and slide_collection != blank
+          assign cta_link = slide_collection.url
+        endif
       -%}
-      <article class="home-premium-slider__slide{% if forloop.first %} is-active{% endif %}" data-home-slide {{ block.shopify_attributes }}>
+      <article class="home-premium-slider__slide{% if forloop.first %} is-active{% endif %}" data-home-slide data-slide-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
         <div class="home-premium-slider__media">
           {%- if block.settings.video != blank -%}
             {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata' }}
           {%- elsif block.settings.image != blank -%}
             {{ block.settings.image | image_url: width: 2400 | image_tag: widths: '750, 1100, 1600, 2200, 2400', loading: 'eager', sizes: '100vw' }}
           {%- else -%}
-            <video autoplay loop muted playsinline preload="metadata">
-              <source src="//demo-1-9580.myshopify.com/cdn/shop/videos/c/vp/5c8186d6608d45f38e64e409e73a4697/5c8186d6608d45f38e64e409e73a4697.HD-1080p-3.3Mbps-73883969.mp4?v=0" type="video/mp4">
-            </video>
+            {%- liquid
+              assign banner_collection = slide_collection
+              if banner_collection == blank
+                assign banner_collection = collections.all
+              endif
+              assign banner_image_count = 0
+            -%}
+            <div class="home-premium-slider__poster home-premium-slider__poster--{{ forloop.index }}">
+              {%- if banner_collection != blank and banner_collection.products_count > 0 -%}
+                <div class="home-premium-slider__product-collage" aria-hidden="true">
+                  {%- for banner_product in banner_collection.products limit: 4 -%}
+                    {%- if banner_product.featured_image -%}
+                      {%- assign banner_image_count = banner_image_count | plus: 1 -%}
+                      <span class="home-premium-slider__product-shot home-premium-slider__product-shot--{{ forloop.index }}">
+                        {{ banner_product.featured_image | image_url: width: 900 | image_tag: widths: '360, 540, 720, 900', loading: 'eager', alt: banner_product.title }}
+                      </span>
+                    {%- endif -%}
+                  {%- endfor -%}
+                </div>
+              {%- endif -%}
+              {%- if banner_image_count == 0 -%}
+                <span class="home-premium-slider__poster-frame home-premium-slider__poster-frame--main"></span>
+                <span class="home-premium-slider__poster-frame home-premium-slider__poster-frame--detail"></span>
+                <span class="home-premium-slider__poster-frame home-premium-slider__poster-frame--product"></span>
+              {%- endif -%}
+              <span class="home-premium-slider__poster-line"></span>
+            </div>
           {%- endif -%}
         </div>
 
@@ -27,14 +57,27 @@
             {%- if block.settings.text != blank -%}
               <p>{{ block.settings.text }}</p>
             {%- endif -%}
-            {%- if block.settings.button_label != blank and block.settings.button_link != blank -%}
-              <a class="button" href="{{ block.settings.button_link }}">{{ block.settings.button_label }}</a>
+            {%- if block.settings.button_label != blank and cta_link != blank -%}
+              <a class="button" href="{{ cta_link }}">{{ block.settings.button_label }}</a>
             {%- endif -%}
           </div>
 
-          <div class="home-premium-slider__side-card">
-            <span>Featured piece</span>
-            {%- if product != blank -%}
+          <div class="home-premium-slider__side-card" data-slider-card>
+            <span>{{ block.settings.collection_label }}</span>
+            {%- if slide_collection != blank -%}
+              <a class="home-premium-slider__collection-title" href="{{ slide_collection.url }}">{{ slide_collection.title }}</a>
+              <div class="home-premium-slider__collection-products">
+                {%- for collection_product in slide_collection.products limit: 3 -%}
+                  <a href="{{ collection_product.url }}" class="home-premium-slider__mini-product">
+                    {%- if collection_product.featured_image -%}
+                      {{ collection_product.featured_image | image_url: width: 220 | image_tag: widths: '120, 180, 220', loading: 'lazy', alt: collection_product.title }}
+                    {%- endif -%}
+                    <span>{{ collection_product.title }}</span>
+                  </a>
+                {%- endfor -%}
+              </div>
+              <a class="button button--secondary" href="{{ slide_collection.url }}">Shop collection</a>
+            {%- elsif product != blank -%}
               <a href="{{ product.url }}" class="home-premium-slider__product-media">
                 {%- if product.featured_image -%}
                   {{ product.featured_image | image_url: width: 620 | image_tag: widths: '260, 420, 620', loading: 'lazy', alt: product.title }}
@@ -50,7 +93,7 @@
                     <button class="button button--secondary" type="submit" data-add-to-cart>Add to cart</button>
                   {%- endform -%}
                 </product-form>
-              {%- elsif product != blank -%}
+              {%- else -%}
                 <a class="button button--secondary" href="{{ product.url }}">Choose options</a>
               {%- endif -%}
             {%- else -%}
@@ -63,6 +106,22 @@
   </div>
 
   {%- if section.blocks.size > 1 -%}
+    <div class="home-premium-slider__orbit page-width" data-home-slider-orbit aria-label="Hero banners">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign slide_collection = block.settings.collection
+          assign orbit_title = block.settings.heading
+          if slide_collection != blank
+            assign orbit_title = slide_collection.title
+          endif
+        -%}
+        <button type="button" class="home-premium-slider__orb{% if forloop.first %} is-active{% endif %}" data-home-slider-dot="{{ forloop.index0 }}" aria-label="Show {{ orbit_title | escape }}">
+          <span>{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+          <strong>{{ orbit_title }}</strong>
+        </button>
+      {%- endfor -%}
+    </div>
+
     <div class="home-premium-slider__controls page-width">
       <div class="home-premium-slider__counter"><span data-home-slider-current>01</span><span>/</span><span>{{ section.blocks.size | prepend: '0' | slice: -2, 2 }}</span></div>
       <div class="home-premium-slider__buttons">
@@ -89,6 +148,8 @@
         { "type": "textarea", "id": "text", "label": "Text", "default": "A premium landing moment with immersive media, quick shopping, and smooth storytelling." },
         { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop collection" },
         { "type": "url", "id": "button_link", "label": "Button link" },
+        { "type": "collection", "id": "collection", "label": "Banner collection" },
+        { "type": "text", "id": "collection_label", "label": "Collection panel label", "default": "Featured collection" },
         { "type": "product", "id": "product", "label": "Featured product" }
       ]
     }

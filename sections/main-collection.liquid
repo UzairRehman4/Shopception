@@ -2,13 +2,18 @@
   <div class="page-width">
     <header class="flowbit-collection__hero">
       <div>
-        <p>Collection</p>
+        <p>Premium Diamond / Collection</p>
         <h1>{{ collection.title }}</h1>
         {%- if collection.description != blank -%}
           <div class="flowbit-collection__description">{{ collection.description }}</div>
+        {%- else -%}
+          <div class="flowbit-collection__description">Browse the full edit with flexible layouts, sharp filters, and product-first views built for fast comparison.</div>
         {%- endif -%}
       </div>
-      <a href="{{ routes.all_products_collection_url }}">All</a>
+      <div class="flowbit-collection__hero-meta">
+        <span>{{ collection.products_count }} pieces</span>
+        <a href="{{ routes.all_products_collection_url }}">All products</a>
+      </div>
     </header>
 
     {%- paginate collection.products by section.settings.products_per_page -%}
@@ -64,15 +69,36 @@
           {%- endfor -%}
         </div>
 
-        <label class="flowbit-sort" for="SortBy-{{ section.id }}">
-          <span>{{ 'sections.collection.sort_by' | t }}</span>
-          <select id="SortBy-{{ section.id }}" name="sort_by" onchange="this.form.submit()">
-            {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
-            {%- for option in collection.sort_options -%}
-              <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>
-            {%- endfor -%}
-          </select>
-        </label>
+        <div class="flowbit-collection__tools">
+          <div class="collection-layout-switcher" aria-label="Product layout">
+            <button type="button" class="is-active" data-grid-mode="clean" aria-pressed="true">
+              <span aria-hidden="true">2x</span>
+              Clean
+            </button>
+            <button type="button" data-grid-mode="dense" aria-pressed="false">
+              <span aria-hidden="true">4x</span>
+              Dense
+            </button>
+            <button type="button" data-grid-mode="editorial" aria-pressed="false">
+              <span aria-hidden="true">E</span>
+              Editorial
+            </button>
+            <button type="button" data-grid-mode="mosaic" aria-pressed="false">
+              <span aria-hidden="true">M</span>
+              Mosaic
+            </button>
+          </div>
+
+          <label class="flowbit-sort" for="SortBy-{{ section.id }}">
+            <span>{{ 'sections.collection.sort_by' | t }}</span>
+            <select id="SortBy-{{ section.id }}" name="sort_by" onchange="this.form.submit()">
+              {%- assign sort_by = collection.sort_by | default: collection.default_sort_by -%}
+              {%- for option in collection.sort_options -%}
+                <option value="{{ option.value }}" {% if option.value == sort_by %}selected{% endif %}>{{ option.name }}</option>
+              {%- endfor -%}
+            </select>
+          </label>
+        </div>
 
         <button class="flowbit-collection__mobile-filter" type="button" data-drawer-open="collection-filters" aria-controls="collection-filters" aria-expanded="false">
           {{ 'sections.collection.filter_sort' | t }}
@@ -98,9 +124,19 @@
       {%- endif -%}
 
       {%- if collection.products.size > 0 -%}
-        <div class="product-grid flowbit-collection__grid">
+        <div class="flowbit-collection__viewbar">
+          <div>
+            <span>View system</span>
+            <strong data-layout-label>Clean grid</strong>
+          </div>
+          <button type="button" data-grid-randomize>Shuffle card sizes</button>
+        </div>
+
+        <div class="product-grid flowbit-collection__grid" data-collection-grid data-grid-mode-current="clean">
           {%- for product in collection.products -%}
-            {%- render 'product-card', product: product -%}
+            <div class="collection-product-cell" data-card-index="{{ forloop.index }}">
+              {%- render 'product-card', product: product -%}
+            </div>
           {%- endfor -%}
         </div>
 

@@ -1,25 +1,52 @@
-<footer class="site-footer premium-footer">
-  <div class="premium-footer__top page-width">
-    <div class="premium-footer__brand">
+<footer class="site-footer premium-footer store-footer">
+  <div class="store-footer__service page-width" aria-label="Store services">
+    <div>
+      <span>01</span>
+      <strong>{{ section.settings.service_1_heading }}</strong>
+      <p>{{ section.settings.service_1_text }}</p>
+    </div>
+    <div>
+      <span>02</span>
+      <strong>{{ section.settings.service_2_heading }}</strong>
+      <p>{{ section.settings.service_2_text }}</p>
+    </div>
+    <div>
+      <span>03</span>
+      <strong>{{ section.settings.service_3_heading }}</strong>
+      <p>{{ section.settings.service_3_text }}</p>
+    </div>
+  </div>
+
+  <div class="store-footer__main page-width">
+    <div class="store-footer__brand">
       <p class="eyebrow">{{ section.settings.eyebrow }}</p>
       <strong>{{ section.settings.heading | default: shop.name }}</strong>
       {%- if section.settings.text != blank -%}
         <p>{{ section.settings.text }}</p>
       {%- endif -%}
+
+      <div class="store-footer__social">
+        {%- if section.settings.instagram_url != blank -%}<a href="{{ section.settings.instagram_url }}" target="_blank" rel="noopener">Instagram</a>{%- endif -%}
+        {%- if section.settings.tiktok_url != blank -%}<a href="{{ section.settings.tiktok_url }}" target="_blank" rel="noopener">TikTok</a>{%- endif -%}
+        {%- if section.settings.youtube_url != blank -%}<a href="{{ section.settings.youtube_url }}" target="_blank" rel="noopener">YouTube</a>{%- endif -%}
+      </div>
     </div>
 
-    <form class="premium-footer__newsletter" action="{{ routes.search_url }}" method="get">
-      <label>
-        <span>{{ section.settings.newsletter_label }}</span>
-        <input type="email" placeholder="{{ section.settings.newsletter_placeholder }}">
-      </label>
-      <button class="button" type="button">{{ section.settings.newsletter_button }}</button>
-    </form>
+    <div class="store-footer__newsletter">
+      <span>{{ section.settings.newsletter_label }}</span>
+      <h2>{{ section.settings.newsletter_heading }}</h2>
+      <p>{{ section.settings.newsletter_text }}</p>
+      <form action="{{ routes.search_url }}" method="get">
+        <label class="visually-hidden" for="FooterEmail-{{ section.id }}">{{ section.settings.newsletter_placeholder }}</label>
+        <input id="FooterEmail-{{ section.id }}" type="email" placeholder="{{ section.settings.newsletter_placeholder }}">
+        <button class="button" type="button">{{ section.settings.newsletter_button }}</button>
+      </form>
+    </div>
   </div>
 
-  <div class="premium-footer__grid page-width">
+  <div class="store-footer__nav page-width">
     {%- if section.settings.menu != blank -%}
-      <nav class="premium-footer__links" aria-label="{{ 'sections.footer.navigation' | t }}">
+      <nav class="store-footer__links" aria-label="{{ 'sections.footer.navigation' | t }}">
         <span>{{ section.settings.menu_heading }}</span>
         {%- for link in section.settings.menu.links -%}
           <a href="{{ link.url }}">{{ link.title }}</a>
@@ -28,7 +55,7 @@
     {%- endif -%}
 
     {%- if section.settings.secondary_menu != blank -%}
-      <nav class="premium-footer__links" aria-label="Footer secondary navigation">
+      <nav class="store-footer__links" aria-label="Footer secondary navigation">
         <span>{{ section.settings.secondary_menu_heading }}</span>
         {%- for link in section.settings.secondary_menu.links -%}
           <a href="{{ link.url }}">{{ link.title }}</a>
@@ -36,7 +63,7 @@
       </nav>
     {%- endif -%}
 
-    <div class="premium-footer__links">
+    <div class="store-footer__links">
       <span>{{ section.settings.account_heading }}</span>
       {%- if shop.customer_accounts_enabled -%}
         <a href="{{ routes.account_url }}">Account</a>
@@ -48,14 +75,24 @@
       {%- endif -%}
     </div>
 
-    <div class="premium-footer__meta">
+    <div class="store-footer__contact">
       <span>{{ section.settings.store_heading }}</span>
       <p>{{ section.settings.store_text }}</p>
+      {%- if section.settings.support_email != blank -%}
+        <a href="mailto:{{ section.settings.support_email }}">{{ section.settings.support_email }}</a>
+      {%- endif -%}
     </div>
   </div>
 
-  <div class="premium-footer__bottom page-width">
+  <div class="store-footer__bottom page-width">
     <p>&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</p>
+    <div class="store-footer__badges" aria-label="Store badges">
+      <span>Secure checkout</span>
+      <span>Visa</span>
+      <span>Mastercard</span>
+      <span>Amex</span>
+      <span>Shop Pay</span>
+    </div>
     <p>{{ section.settings.bottom_text }}</p>
   </div>
 </footer>
@@ -64,20 +101,32 @@
 {
   "name": "Footer",
   "settings": [
-    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Editorial commerce" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Shopception" },
-    { "type": "textarea", "id": "text", "label": "Text", "default": "A premium storefront experience built for modern fashion, lifestyle, and editorial commerce brands." },
-    { "type": "text", "id": "newsletter_label", "label": "Newsletter label", "default": "Join the list" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Premium Diamond" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Premium Diamond" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "A premium storefront for sharp product drops, everyday uniform pieces, and polished checkout." },
+    { "type": "text", "id": "service_1_heading", "label": "Service 1 heading", "default": "Fast dispatch" },
+    { "type": "text", "id": "service_1_text", "label": "Service 1 text", "default": "Orders packed with care and shipped quickly." },
+    { "type": "text", "id": "service_2_heading", "label": "Service 2 heading", "default": "Easy returns" },
+    { "type": "text", "id": "service_2_text", "label": "Service 2 text", "default": "Simple returns and exchange support." },
+    { "type": "text", "id": "service_3_heading", "label": "Service 3 heading", "default": "Secure checkout" },
+    { "type": "text", "id": "service_3_text", "label": "Service 3 text", "default": "Protected payments and reliable order updates." },
+    { "type": "text", "id": "newsletter_label", "label": "Newsletter label", "default": "Members list" },
+    { "type": "text", "id": "newsletter_heading", "label": "Newsletter heading", "default": "Get early access to drops." },
+    { "type": "textarea", "id": "newsletter_text", "label": "Newsletter text", "default": "Sign up for launch notes, restock alerts, and private product previews." },
     { "type": "text", "id": "newsletter_placeholder", "label": "Newsletter placeholder", "default": "Email address" },
-    { "type": "text", "id": "newsletter_button", "label": "Newsletter button", "default": "Subscribe" },
+    { "type": "text", "id": "newsletter_button", "label": "Newsletter button", "default": "Join" },
     { "type": "link_list", "id": "menu", "label": "Menu", "default": "footer" },
     { "type": "text", "id": "menu_heading", "label": "Menu heading", "default": "Shop" },
     { "type": "link_list", "id": "secondary_menu", "label": "Secondary menu" },
-    { "type": "text", "id": "secondary_menu_heading", "label": "Secondary menu heading", "default": "Information" },
+    { "type": "text", "id": "secondary_menu_heading", "label": "Secondary menu heading", "default": "Support" },
     { "type": "text", "id": "account_heading", "label": "Account heading", "default": "Account" },
-    { "type": "text", "id": "store_heading", "label": "Store heading", "default": "Studio" },
-    { "type": "textarea", "id": "store_text", "label": "Store text", "default": "Use this space for store location, contact details, shipping notes, or brand values." },
-    { "type": "text", "id": "bottom_text", "label": "Bottom text", "default": "Designed for premium shopping experiences." }
+    { "type": "text", "id": "store_heading", "label": "Store heading", "default": "Help desk" },
+    { "type": "textarea", "id": "store_text", "label": "Store text", "default": "Need sizing, order, or product support? Reach out and we will help." },
+    { "type": "text", "id": "support_email", "label": "Support email", "default": "support@premiumdiamond.com" },
+    { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
+    { "type": "url", "id": "tiktok_url", "label": "TikTok URL" },
+    { "type": "url", "id": "youtube_url", "label": "YouTube URL" },
+    { "type": "text", "id": "bottom_text", "label": "Bottom text", "default": "Built for premium shopping experiences." }
   ]
 }
 {% endschema %}

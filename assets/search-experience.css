@@ -1,0 +1,237 @@
+/* Premium Diamond search experience */
+.site-header__search-trigger {
+  gap: .45rem;
+  min-width: 112px;
+  border: 1px solid currentColor;
+  border-radius: 999px;
+  background: rgba(255, 248, 240, .12);
+  padding-inline: .85rem;
+}
+
+.site-header__search-text {
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+#search-drawer .drawer__overlay {
+  background: rgba(33, 25, 35, .42) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+#search-drawer .drawer__panel.flowbit-search {
+  background:
+    radial-gradient(circle at 80% 0%, rgba(169, 132, 175, .26), transparent 28%),
+    linear-gradient(180deg, #fff8f0, #fff8f0) !important;
+  color: #211923 !important;
+}
+
+.flowbit-search__form {
+  background: transparent;
+}
+
+.flowbit-search__header {
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 4vw, 4rem);
+  border-bottom-color: rgba(81, 53, 90, .14);
+}
+
+.flowbit-search__icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  background: #51355a;
+  color: #fff8f0;
+}
+
+.flowbit-search__input {
+  font-family: 'Bayon', var(--font-heading) !important;
+  font-size: clamp(3.8rem, 11vw, 12rem) !important;
+  line-height: .78 !important;
+  text-transform: uppercase !important;
+  color: #211923 !important;
+}
+
+.flowbit-search__input::placeholder {
+  color: rgba(81, 53, 90, .26) !important;
+}
+
+.flowbit-search__reset {
+  min-height: 38px;
+  border: 1px solid rgba(81, 53, 90, .18);
+  border-radius: 999px;
+  padding: .45rem .75rem;
+  color: #51355a;
+}
+
+.flowbit-search__close {
+  border-color: rgba(81, 53, 90, .18);
+  background: rgba(255, 255, 255, .45);
+}
+
+.flowbit-search__content {
+  display: grid;
+  grid-template-columns: minmax(220px, .32fr) minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  padding: clamp(1rem, 3vw, 2rem) clamp(1rem, 4vw, 4rem) clamp(1.2rem, 4vw, 4rem);
+}
+
+.flowbit-search__discovery {
+  display: grid;
+  align-content: start;
+  gap: 1.25rem;
+  position: sticky;
+  top: 1rem;
+}
+
+.flowbit-search__panel {
+  min-width: 0;
+}
+
+.flowbit-search__section-head {
+  border-bottom: 1px solid rgba(81, 53, 90, .14);
+  padding-bottom: .65rem;
+}
+
+.flowbit-search__section-head h3 {
+  margin: 0;
+  color: #746474;
+  font-size: .72rem;
+  font-weight: 900;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+}
+
+.flowbit-search__term-list,
+.flowbit-search__category-list,
+.flowbit-search__suggestions,
+.premium-search__chips {
+  display: grid;
+  gap: .45rem;
+}
+
+.flowbit-search__term-list button,
+.flowbit-search__category-list a,
+.flowbit-search__category-list button,
+.flowbit-search__suggestions button,
+.premium-search__chips button {
+  width: 100%;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid rgba(81, 53, 90, .16) !important;
+  border-radius: 0 !important;
+  background: rgba(255, 255, 255, .52) !important;
+  color: #211923 !important;
+  padding: .65rem .75rem;
+  text-align: left;
+  text-decoration: none;
+  font-size: .86rem;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: none;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+
+.flowbit-search__term-list button::after,
+.flowbit-search__category-list a::after,
+.flowbit-search__category-list button::after,
+.flowbit-search__suggestions button::after {
+  content: "Search";
+  color: #9e2b25;
+  font-size: .62rem;
+  font-weight: 900;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.flowbit-search__category-list a::after,
+.flowbit-search__category-list button::after {
+  content: "Shop";
+}
+
+.flowbit-search__term-list button:hover,
+.flowbit-search__category-list a:hover,
+.flowbit-search__category-list button:hover,
+.flowbit-search__suggestions button:hover,
+.premium-search__chips button:hover {
+  background: #51355a !important;
+  color: #fff8f0 !important;
+  transform: translateX(4px);
+}
+
+.flowbit-search__results {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-items: start;
+}
+
+.flowbit-search-card {
+  border: 1px solid rgba(81, 53, 90, .14);
+  padding: .65rem;
+  background: rgba(255, 255, 255, .42);
+}
+
+.flowbit-search-card__media {
+  border-radius: 0;
+  background: linear-gradient(135deg, rgba(169,132,175,.25), rgba(138,175,132,.18));
+}
+
+.flowbit-search-card p {
+  font-size: .9rem;
+  font-weight: 800;
+}
+
+.flowbit-search__footer {
+  padding-inline: clamp(1rem, 4vw, 4rem);
+  border-top-color: rgba(81, 53, 90, .14);
+  background: rgba(255, 248, 240, .82);
+}
+
+.flowbit-search__view-all {
+  border-radius: 0 !important;
+  background: #51355a !important;
+  border-color: #51355a !important;
+  color: #fff8f0 !important;
+}
+
+.flowbit-search__view-all:hover {
+  background: #9e2b25 !important;
+  border-color: #9e2b25 !important;
+}
+
+@media (max-width: 989px) {
+  .flowbit-search__content {
+    grid-template-columns: 1fr;
+  }
+
+  .flowbit-search__discovery {
+    position: static;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .flowbit-search__results {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 749px) {
+  .site-header__search-trigger {
+    min-width: 44px;
+    border: 0;
+    padding-inline: .75rem;
+  }
+
+  .site-header__search-text {
+    display: none;
+  }
+
+  .flowbit-search__input {
+    font-size: clamp(3rem, 18vw, 6.5rem) !important;
+  }
+
+  .flowbit-search__discovery {
+    grid-template-columns: 1fr;
+  }
+}

@@ -2,11 +2,11 @@
   "current": {
     "type_body_font": "assistant_n4",
     "type_heading_font": "playfair_display_n7",
-    "color_background": "#f7f4ef",
-    "color_foreground": "#171310",
-    "color_muted": "#746f68",
-    "color_accent": "#6f3429",
-    "color_surface": "#e7eadf",
-    "color_ink_soft": "#2d2823"
+    "color_background": "#FFF8F0",
+    "color_foreground": "#211923",
+    "color_muted": "#746474",
+    "color_accent": "#9E2B25",
+    "color_surface": "#f2e7f3",
+    "color_ink_soft": "#51355A"
   }
 }

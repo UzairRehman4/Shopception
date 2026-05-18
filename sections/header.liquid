@@ -21,7 +21,7 @@
       {%- if section.settings.logo != blank -%}
         {{ section.settings.logo | image_url: width: 220 | image_tag: widths: '110, 160, 220', loading: 'eager', alt: shop.name }}
       {%- else -%}
-        <img src="//demo-1-9580.myshopify.com/cdn/shop/files/protect-logo.gif?height=80&amp;v=1771183921" alt="{{ shop.name }}" width="134" height="80" loading="eager">
+        <span class="site-header__wordmark">Premium Diamond</span>
       {%- endif -%}
     </a>
 
@@ -52,12 +52,21 @@
     {%- endif -%}
 
     <div class="site-header__actions">
-      <button class="icon-button" type="button" data-drawer-open="search-drawer" aria-controls="search-drawer" aria-expanded="false">
+      <button class="icon-button site-header__search-trigger" type="button" data-drawer-open="search-drawer" aria-controls="search-drawer" aria-expanded="false">
         <span class="svg-wrapper" aria-hidden="true">
           <svg viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="4.75" stroke="currentColor" stroke-width="1.4"/><path d="m12.5 12.5 3.25 3.25" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4"/></svg>
         </span>
+        <span class="site-header__search-text">Search</span>
         <span class="visually-hidden">{{ 'general.search.search' | t }}</span>
       </button>
+      {%- if shop.customer_accounts_enabled -%}
+        <button class="icon-button site-header__account-trigger" type="button" data-drawer-open="account-drawer" aria-controls="account-drawer" aria-expanded="false" aria-label="Account">
+          <span class="svg-wrapper" aria-hidden="true">
+            <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="6.25" r="3.25" stroke="currentColor" stroke-width="1.4"/><path d="M3.75 17.25c.55-3.05 2.78-5 6.25-5s5.7 1.95 6.25 5" stroke="currentColor" stroke-linecap="round" stroke-width="1.4"/></svg>
+          </span>
+          <span class="site-header__account-text">{% if customer %}Profile{% else %}Login{% endif %}</span>
+        </button>
+      {%- endif -%}
       <button class="icon-button" type="button" data-cart-trigger data-drawer-open="cart-drawer" aria-controls="cart-drawer" aria-expanded="false" aria-label="{{ 'templates.cart.cart' | t }}">
         <span class="svg-wrapper" aria-hidden="true">
           <svg viewBox="0 0 20 20" fill="none"><path d="M3.392 6.875h13.216v8.016c0 .567-.224 1.112-.624 1.513-.4.402-.941.627-1.506.627H5.522a2.13 2.13 0 0 1-1.506-.627 2.15 2.15 0 0 1-.624-1.513zM8.818 2.969h2.333c.618 0 1.211.247 1.649.686a2.35 2.35 0 0 1 .683 1.658v1.562H6.486V5.313c0-.622.246-1.218.683-1.658a2.33 2.33 0 0 1 1.65-.686" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.4"/></svg>
@@ -119,6 +128,37 @@
         </div>
 
         <div class="flowbit-search__content">
+          <aside class="flowbit-search__discovery" data-search-discovery>
+            <section class="flowbit-search__panel flowbit-search__panel--terms">
+              <div class="flowbit-search__section-head"><h3>Popular Search Terms</h3></div>
+              <div class="flowbit-search__term-list">
+                {%- assign popular_terms = section.settings.popular_search_terms | split: "," -%}
+                {%- for term in popular_terms -%}
+                  {%- assign clean_term = term | strip -%}
+                  {%- if clean_term != blank -%}
+                    <button type="button" data-search-term="{{ clean_term | escape }}">{{ clean_term }}</button>
+                  {%- endif -%}
+                {%- endfor -%}
+              </div>
+            </section>
+
+            <section class="flowbit-search__panel flowbit-search__panel--categories">
+              <div class="flowbit-search__section-head"><h3>Shop by Category</h3></div>
+              <div class="flowbit-search__category-list">
+                <a href="{{ routes.all_products_collection_url }}">All products</a>
+                <a href="{{ routes.collections_url }}">Collections</a>
+                <button type="button" data-search-term="tops">Tops</button>
+                <button type="button" data-search-term="bottoms">Bottoms</button>
+                <button type="button" data-search-term="accessories">Accessories</button>
+              </div>
+            </section>
+          </aside>
+
+          <section class="flowbit-search__panel" data-search-suggestions hidden>
+            <div class="flowbit-search__section-head"><h3>Suggestions</h3></div>
+            <div class="flowbit-search__suggestions" data-search-suggestions-list></div>
+          </section>
+
           <section class="flowbit-search__panel" data-previous-searches hidden>
             <div class="flowbit-search__section-head">
               <h3>Recent</h3>
@@ -133,7 +173,7 @@
           </section>
 
           <section class="flowbit-search__panel" data-search-recommendations>
-            <div class="flowbit-search__section-head"><h3>Products</h3></div>
+            <div class="flowbit-search__section-head"><h3>Popular Right Now</h3></div>
             <div class="flowbit-search__results">
               {%- if section.settings.search_products != blank -%}
                 {%- for product in section.settings.search_products limit: 4 -%}
@@ -150,15 +190,23 @@
                   </article>
                 {%- endfor -%}
               {%- else -%}
-                {%- assign demo_products = "Red Prtct Socks|blue-prtct-socks-copy|PRTCT_Sock_Red_Flat.png?v=1771419430, Pink Prtct Socks|green-prtct-socks-copy|PRTCT_Sock_Pink_Flat.png?v=1771419430, Green Prtct Socks|red-prtct-socks-copy|PRTCT_Sock_Green_Flat.png?v=1771419429, Blue Prtct Socks|black-prtct-socks-copy|PRTCT_Sock_Blue_Flat.png?v=1771419427" | split: ", " -%}
-                {%- for item in demo_products -%}
-                  {%- assign parts = item | split: "|" -%}
+                {%- for product in collections.all.products limit: 4 -%}
                   <article class="flowbit-search-card">
-                    <a href="/products/{{ parts[1] }}" class="flowbit-search-card__link"><span class="visually-hidden">{{ parts[0] }}</span></a>
+                    <a href="{{ product.url }}" class="flowbit-search-card__link">
+                      <span class="visually-hidden">{{ product.title }}</span>
+                    </a>
                     <div class="flowbit-search-card__media">
-                      <img src="//demo-1-9580.myshopify.com/cdn/shop/files/{{ parts[2] }}&amp;width=500" alt="" width="500" height="625" loading="lazy">
+                      {%- if product.featured_image -%}
+                        {{ product.featured_image | image_url: width: 500 | image_tag: widths: '180, 320, 500', loading: 'lazy', alt: product.title }}
+                      {%- endif -%}
                     </div>
-                    <p>{{ parts[0] }}</p>
+                    <p>{{ product.title }}</p>
+                  </article>
+                {%- else -%}
+                  <article class="flowbit-search-card">
+                    <a href="{{ routes.all_products_collection_url }}" class="flowbit-search-card__link"><span class="visually-hidden">Shop all</span></a>
+                    <div class="flowbit-search-card__media"></div>
+                    <p>Add products in Shopify admin to power search recommendations.</p>
                   </article>
                 {%- endfor -%}
               {%- endif -%}
@@ -262,6 +310,62 @@
       </form>
     </div>
   </div>
+
+  {%- if shop.customer_accounts_enabled -%}
+    <div class="drawer drawer--right" id="account-drawer" data-drawer hidden>
+      <div class="drawer__overlay" data-drawer-close></div>
+      <div class="drawer__panel premium-account" role="dialog" aria-modal="true" aria-label="Account" tabindex="-1">
+        <div class="drawer__header premium-drawer-header">
+          <div>
+            <span class="premium-drawer-kicker">Profile</span>
+            <strong>{% if customer %}{{ customer.first_name | default: 'Account' }}{% else %}Account{% endif %}</strong>
+          </div>
+          <button class="icon-button premium-close" type="button" data-drawer-close>
+            <span aria-hidden="true">Close</span>
+            <span class="visually-hidden">{{ 'accessibility.close' | t }}</span>
+          </button>
+        </div>
+
+        <div class="premium-account__body">
+          {%- if customer -%}
+            <div class="premium-account__card">
+              <span class="premium-account__avatar">{{ customer.first_name | default: customer.email | slice: 0 | upcase }}</span>
+              <div>
+                <strong>{{ customer.name | default: customer.email }}</strong>
+                <p>{{ customer.email }}</p>
+              </div>
+            </div>
+            <div class="premium-account__stats">
+              <div><span>Orders</span><strong>{{ customer.orders_count }}</strong></div>
+              <div><span>Total spent</span><strong>{{ customer.total_spent | money }}</strong></div>
+              <div><span>Status</span><strong>Member</strong></div>
+            </div>
+            <nav class="premium-account__links" aria-label="Account links">
+              <a href="{{ routes.account_url }}">Dashboard</a>
+              <a href="{{ routes.account_addresses_url }}">Addresses</a>
+              <a href="{{ routes.cart_url }}">Bag</a>
+              <a href="{{ routes.account_logout_url }}">Logout</a>
+            </nav>
+          {%- else -%}
+            <div class="premium-account__intro">
+              <p class="eyebrow">Premium Diamond member area</p>
+              <h2>Track orders, save details, and check out faster.</h2>
+            </div>
+            <div class="premium-account__actions">
+              <a class="button" href="{{ routes.account_login_url }}">Login</a>
+              <a class="button button--secondary" href="{{ routes.account_register_url }}">Create account</a>
+            </div>
+            <div class="premium-account__perks">
+              <span>Order history</span>
+              <span>Saved addresses</span>
+              <span>Faster checkout</span>
+              <span>Drop access ready</span>
+            </div>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+  {%- endif -%}
 </header>
 
 {% schema %}
@@ -271,7 +375,7 @@
     { "type": "image_picker", "id": "logo", "label": "Logo" },
     { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
     { "type": "checkbox", "id": "show_announcement", "label": "Show announcement bar", "default": true },
-    { "type": "text", "id": "announcement_text", "label": "Announcement text", "default": "Free shipping on orders over $75" },
+    { "type": "text", "id": "announcement_text", "label": "Announcement text", "default": "Premium diamond goods / fast dispatch / limited drops" },
     { "type": "url", "id": "announcement_link", "label": "Announcement link" },
     { "type": "text", "id": "mega_eyebrow", "label": "Mega menu eyebrow", "default": "Curated edit" },
     { "type": "text", "id": "mega_heading", "label": "Mega menu heading", "default": "Shop the season" },
@@ -279,6 +383,7 @@
     { "type": "text", "id": "search_placeholder", "label": "Search label", "default": "Search the collection" },
     { "type": "text", "id": "search_input_placeholder", "label": "Search input placeholder", "default": "Type product, color, style..." },
     { "type": "text", "id": "search_recommendations_title", "label": "Search recommendations title", "default": "Recommended for you" },
+    { "type": "textarea", "id": "popular_search_terms", "label": "Popular search terms", "default": "tops, bottoms, accessories, new drops, socks, black, red, oversized" },
     { "type": "product_list", "id": "search_products", "label": "Search recommended products", "limit": 6 },
     { "type": "text", "id": "cart_recommendations_title", "label": "Cart recommendations title", "default": "Complete the look" },
     { "type": "product_list", "id": "cart_products", "label": "Cart recommended products", "limit": 3 }

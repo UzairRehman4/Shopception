@@ -1,23 +1,70 @@
 {%- assign collection = section.settings.collection -%}
 
-<section class="section">
+<section class="section premium-product-wall" data-product-wall>
   <div class="page-width">
-    <div class="section__header">
-      <h2 class="section__title">{{ section.settings.heading | escape }}</h2>
-      {%- if collection != blank -%}
-        <a href="{{ collection.url }}">{{ 'sections.featured_collection.view_all' | t }}</a>
-      {%- endif -%}
+    <div class="premium-product-wall__header">
+      <div>
+        <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+        <h2 class="section__title">{{ section.settings.heading | escape }}</h2>
+        {%- if section.settings.text != blank -%}
+          <p class="premium-product-wall__lede">{{ section.settings.text }}</p>
+        {%- endif -%}
+      </div>
+
+      <div class="premium-product-wall__stats">
+        <div>
+          <span>Assortment</span>
+          <strong>{% if collection != blank %}{{ collection.products_count }}{% else %}--{% endif %}</strong>
+        </div>
+        <div>
+          <span>Dispatch</span>
+          <strong>24/48</strong>
+        </div>
+        <div>
+          <span>Fit system</span>
+          <strong>Live</strong>
+        </div>
+      </div>
     </div>
 
-    <div class="product-grid">
+    <div class="premium-product-wall__toolbar">
+      <div class="premium-product-wall__chips" aria-label="Product filters">
+        <button type="button" class="is-active" data-wall-filter="all">All</button>
+        <button type="button" data-wall-filter="top">Tops</button>
+        <button type="button" data-wall-filter="bottom">Bottoms</button>
+        <button type="button" data-wall-filter="accessor">Accessories</button>
+        <button type="button" data-wall-filter="new">New</button>
+      </div>
+
+      <div class="premium-product-wall__tools">
+        <button type="button" class="is-active" data-wall-view="editorial" aria-pressed="true">Editorial</button>
+        <button type="button" data-wall-view="grid" aria-pressed="false">Grid</button>
+        <button type="button" data-wall-view="compact" aria-pressed="false">Compact</button>
+        <button type="button" data-wall-sort="price">Sort price</button>
+      </div>
+    </div>
+
+    <div class="premium-product-wall__service" aria-label="Store features">
+      <span>Quick add</span>
+      <span>Save list</span>
+      <span>Quick view</span>
+      <span>Color and size signals</span>
+      <span>Editorial product wall</span>
+    </div>
+
+    <div class="premium-product-wall__grid is-editorial" data-wall-grid>
       {%- if collection != blank and collection.products_count > 0 -%}
         {%- for product in collection.products limit: section.settings.products_to_show -%}
-          {%- render 'product-card', product: product -%}
+          <div class="premium-product-wall__cell{% if forloop.index == 1 or forloop.index == 6 %} is-feature{% endif %}" data-wall-cell>
+            {%- render 'product-card', product: product -%}
+          </div>
         {%- endfor -%}
       {%- else -%}
-        {%- for index in (1..4) -%}
-          <article class="product-card">
-            <div class="product-card__media"></div>
+        {%- for index in (1..8) -%}
+          <article class="product-card product-card--premium">
+            <div class="product-card__media-shell">
+              <div class="product-card__media"></div>
+            </div>
             <div class="product-card__info">
               <h3 class="product-card__title">{{ 'onboarding.product_title' | t }}</h3>
               <span class="price">{{ 1999 | money }}</span>
@@ -25,6 +72,37 @@
           </article>
         {%- endfor -%}
       {%- endif -%}
+    </div>
+
+    <div class="premium-product-wall__footer">
+      {%- if collection != blank -%}
+        <a class="button" href="{{ collection.url }}">{{ 'sections.featured_collection.view_all' | t }}</a>
+      {%- else -%}
+        <a class="button" href="{{ routes.all_products_collection_url }}">Shop all</a>
+      {%- endif -%}
+      <p>Built for fast comparison, saved picks, quick product checks, and a cleaner route from discovery to cart.</p>
+    </div>
+  </div>
+
+  <div class="premium-quick-view" data-premium-quick-view hidden>
+    <div class="premium-quick-view__overlay" data-quick-view-close></div>
+    <div class="premium-quick-view__panel" role="dialog" aria-modal="true" aria-label="Quick view" tabindex="-1">
+      <button type="button" class="premium-quick-view__close" data-quick-view-close>Close</button>
+      <div class="premium-quick-view__media">
+        <img alt="" data-quick-view-image width="1000" height="1250">
+      </div>
+      <div class="premium-quick-view__content">
+        <p class="eyebrow" data-quick-view-type></p>
+        <h3 data-quick-view-title></h3>
+        <strong data-quick-view-price></strong>
+        <span data-quick-view-available></span>
+        <div class="premium-quick-view__features">
+          <span>Premium finish</span>
+          <span>Fast dispatch</span>
+          <span>Easy returns</span>
+        </div>
+        <a class="button" href="#" data-quick-view-link>View product</a>
+      </div>
     </div>
   </div>
 </section>
@@ -35,9 +113,21 @@
   "settings": [
     {
       "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Premium product wall"
+    },
+    {
+      "type": "text",
       "id": "heading",
       "label": "Heading",
       "default": "Latest arrivals"
+    },
+    {
+      "type": "textarea",
+      "id": "text",
+      "label": "Text",
+      "default": "A premium product wall with quick actions, category scanning, and layout modes."
     },
     {
       "type": "collection",
@@ -47,11 +137,11 @@
     {
       "type": "range",
       "id": "products_to_show",
-      "min": 2,
-      "max": 8,
-      "step": 1,
+      "min": 4,
+      "max": 24,
+      "step": 2,
       "label": "Products to show",
-      "default": 4
+      "default": 12
     }
   ],
   "presets": [

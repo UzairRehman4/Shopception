@@ -1,0 +1,77 @@
+<section class="premium-brand-lab">
+  <div class="premium-brand-lab__inner page-width">
+    <div class="premium-brand-lab__intro">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h2>{{ section.settings.heading }}</h2>
+      {%- if section.settings.text != blank -%}
+        <p>{{ section.settings.text }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="premium-brand-lab__stats" aria-label="Brand highlights">
+      <div>
+        <strong>{{ section.settings.stat_1 }}</strong>
+        <span>{{ section.settings.stat_label_1 }}</span>
+      </div>
+      <div>
+        <strong>{{ section.settings.stat_2 }}</strong>
+        <span>{{ section.settings.stat_label_2 }}</span>
+      </div>
+      <div>
+        <strong>{{ section.settings.stat_3 }}</strong>
+        <span>{{ section.settings.stat_label_3 }}</span>
+      </div>
+    </div>
+
+    <div class="premium-brand-lab__points">
+      {%- for block in section.blocks -%}
+        <article class="premium-brand-lab__point" {{ block.shopify_attributes }}>
+          <span>{{ block.settings.number }}</span>
+          <h3>{{ block.settings.heading }}</h3>
+          <p>{{ block.settings.text }}</p>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Premium brand lab",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The diamond standard" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Premium, technical, cultural." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "A store system with performance precision, modern provenance, and cultural pace." },
+    { "type": "text", "id": "stat_1", "label": "Stat 1", "default": "2026" },
+    { "type": "text", "id": "stat_label_1", "label": "Stat label 1", "default": "New era" },
+    { "type": "text", "id": "stat_2", "label": "Stat 2", "default": "03" },
+    { "type": "text", "id": "stat_label_2", "label": "Stat label 2", "default": "Core edits" },
+    { "type": "text", "id": "stat_3", "label": "Stat 3", "default": "24/7" },
+    { "type": "text", "id": "stat_label_3", "label": "Stat label 3", "default": "Everyday uniform" }
+  ],
+  "blocks": [
+    {
+      "type": "point",
+      "name": "Point",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "default": "01" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Material first" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Frame the product with detail, confidence, and a premium standard." }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "Premium brand lab",
+      "blocks": [
+        { "type": "point" },
+        { "type": "point" },
+        { "type": "point" }
+      ]
+    }
+  ]
+}
+{% endschema %}

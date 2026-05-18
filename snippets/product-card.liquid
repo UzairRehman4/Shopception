@@ -7,40 +7,62 @@
   endif
 -%}
 
-<article class="product-card product-card--premium">
-  <a class="product-card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
-    <div class="product-card__badges">
-      {%- unless product.available -%}
-        <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
-      {%- elsif product.compare_at_price > product.price -%}
-        <span class="badge badge--sale">-{{ discount_percent }}%</span>
-      {%- else -%}
-        <span class="badge badge--new">New</span>
-      {%- endunless -%}
-    </div>
+<article class="product-card product-card--premium" data-product-card data-product-handle="{{ product.handle | escape }}" data-product-type="{{ product.type | escape }}" data-product-title="{{ product.title | escape }}" data-product-price="{{ product.price }}" data-product-available="{% if product.available %}true{% else %}false{% endif %}">
+  <div class="product-card__media-shell">
+    <a class="product-card__media" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+      <div class="product-card__badges">
+        {%- unless product.available -%}
+          <span class="badge badge--sold-out">{{ 'products.product.sold_out' | t }}</span>
+        {%- elsif product.compare_at_price > product.price -%}
+          <span class="badge badge--sale">-{{ discount_percent }}%</span>
+        {%- else -%}
+          <span class="badge badge--new">New</span>
+        {%- endunless -%}
+      </div>
 
-    {%- if product.featured_media -%}
-      {{ product.featured_media | image_url: width: 900 | image_tag: widths: '300, 450, 600, 900', loading: 'lazy', sizes: '(min-width: 750px) 25vw, 50vw', class: 'product-card__image product-card__image--primary' }}
-      {%- if product.media[1] != blank -%}
-        {{ product.media[1] | image_url: width: 900 | image_tag: widths: '300, 450, 600, 900', loading: 'lazy', sizes: '(min-width: 750px) 25vw, 50vw', class: 'product-card__image product-card__image--secondary' }}
-      {%- endif -%}
-    {%- else -%}
-      {{ 'product-1' | placeholder_svg_tag }}
-    {%- endif -%}
-
-    <div class="product-card__hover-panel">
-      <div>
-        {%- if product.vendor != blank -%}
-          <span>{{ product.vendor }}</span>
+      {%- if product.featured_media -%}
+        {{ product.featured_media | image_url: width: 900 | image_tag: widths: '300, 450, 600, 900', loading: 'lazy', sizes: '(min-width: 750px) 25vw, 50vw', class: 'product-card__image product-card__image--primary' }}
+        {%- if product.media[1] != blank -%}
+          {{ product.media[1] | image_url: width: 900 | image_tag: widths: '300, 450, 600, 900', loading: 'lazy', sizes: '(min-width: 750px) 25vw, 50vw', class: 'product-card__image product-card__image--secondary' }}
         {%- endif -%}
-        <strong>{% if product.available %}In stock{% else %}Out of stock{% endif %}</strong>
+      {%- else -%}
+        {{ 'product-1' | placeholder_svg_tag }}
+      {%- endif -%}
+
+      <div class="product-card__hover-panel">
+        <div>
+          {%- if product.vendor != blank -%}
+            <span>{{ product.vendor }}</span>
+          {%- endif -%}
+          <strong>{% if product.available %}In stock{% else %}Out of stock{% endif %}</strong>
+        </div>
+        <div>
+          <span>{{ product.variants.size }} option{% if product.variants.size != 1 %}s{% endif %}</span>
+          {%- if discount_percent > 0 -%}<strong>Save {{ discount_percent }}%</strong>{%- endif -%}
+        </div>
       </div>
-      <div>
-        <span>{{ product.variants.size }} option{% if product.variants.size != 1 %}s{% endif %}</span>
-        {%- if discount_percent > 0 -%}<strong>Save {{ discount_percent }}%</strong>{%- endif -%}
-      </div>
+    </a>
+
+    <div class="product-card__quick-actions" aria-label="Product actions">
+      <button type="button" class="product-card__icon-action" data-wishlist-toggle data-product-handle="{{ product.handle | escape }}" aria-label="Save {{ product.title | escape }}" aria-pressed="false">
+        <span aria-hidden="true">♡</span>
+      </button>
+      <button
+        type="button"
+        class="product-card__icon-action"
+        data-quick-view
+        data-title="{{ product.title | escape }}"
+        data-url="{{ product.url }}"
+        data-price="{{ product.price | money | escape }}"
+        data-type="{{ product.type | escape }}"
+        data-available="{% if product.available %}In stock{% else %}Sold out{% endif %}"
+        {% if product.featured_image %}data-image="{{ product.featured_image | image_url: width: 1000 }}"{% endif %}
+        aria-label="Quick view {{ product.title | escape }}"
+      >
+        <span aria-hidden="true">+</span>
+      </button>
     </div>
-  </a>
+  </div>
 
   <div class="product-card__info">
     <div class="product-card__meta-row">
@@ -55,17 +77,62 @@
 
     {%- unless product.has_only_default_variant -%}
       <div class="product-card__options">
-        {%- for option in product.options_with_values limit: 2 -%}
-          <span>{{ option.name }}: {{ option.values | join: ', ' | truncate: 38 }}</span>
+        {%- for option in product.options_with_values limit: 3 -%}
+          {%- assign option_name = option.name | downcase -%}
+          <div class="product-card__option-group{% if option_name contains 'color' or option_name contains 'colour' %} product-card__option-group--color{% endif %}">
+            <span class="product-card__option-label">{{ option.name }}</span>
+            <div class="product-card__option-values">
+              {%- for value in option.values limit: 5 -%}
+                {%- if option_name contains 'color' or option_name contains 'colour' -%}
+                  <span class="product-card__swatch" style="--swatch-color: {{ value | handle | replace: '-', '' }};" title="{{ value | escape }}">
+                    <span class="visually-hidden">{{ value }}</span>
+                  </span>
+                {%- else -%}
+                  <span class="product-card__option-pill">{{ value }}</span>
+                {%- endif -%}
+              {%- endfor -%}
+              {%- if option.values.size > 5 -%}
+                <span class="product-card__option-more">+{{ option.values.size | minus: 5 }}</span>
+              {%- endif -%}
+            </div>
+          </div>
         {%- endfor -%}
       </div>
     {%- endunless -%}
 
+    <div class="product-card__signals">
+      {%- if product.options_with_values.size > 0 -%}
+        {%- for option in product.options_with_values limit: 1 -%}
+          <span>{{ option.values.size }} {{ option.name | downcase }}</span>
+        {%- endfor -%}
+      {%- endif -%}
+      <span>{% if product.media.size > 1 %}Alt image{% else %}Studio shot{% endif %}</span>
+      <span>{% if product.available %}Ready to ship{% else %}Waitlist{% endif %}</span>
+    </div>
+
     <div class="product-card__actions">
-      {%- if product.available and product.has_only_default_variant -%}
+      {%- if product.available -%}
         <product-form>
           {%- form 'product', product, class: 'product-card__form' -%}
-            <input type="hidden" name="id" value="{{ first_variant.id }}">
+            {%- if product.has_only_default_variant -%}
+              <input type="hidden" name="id" value="{{ first_variant.id }}">
+            {%- else -%}
+              <label class="product-card__variant-select-wrap">
+                <span class="visually-hidden">Select option for {{ product.title }}</span>
+                <select name="id" class="product-card__variant-select" data-card-variant-select>
+                  {%- for variant in product.variants -%}
+                    <option
+                      value="{{ variant.id }}"
+                      {% if variant.id == first_variant.id %}selected{% endif %}
+                      {% unless variant.available %}disabled{% endunless %}
+                      data-available="{% if variant.available %}true{% else %}false{% endif %}"
+                    >
+                      {{ variant.title }}{% unless variant.available %} - {{ 'products.product.sold_out' | t }}{% endunless %}
+                    </option>
+                  {%- endfor -%}
+                </select>
+              </label>
+            {%- endif -%}
             <input type="hidden" name="quantity" value="1">
             <button class="button button--secondary product-card__button" type="submit" data-add-to-cart>
               {{ 'products.product.quick_add' | t }}

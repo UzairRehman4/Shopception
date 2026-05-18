@@ -1,0 +1,120 @@
+<section class="category-product-edit section" data-category-edit>
+  <div class="page-width">
+    <div class="section__header category-product-edit__header">
+      <div>
+        <p class="eyebrow">{{ section.settings.eyebrow }}</p>
+        <h2 class="section__title">{{ section.settings.heading }}</h2>
+      </div>
+      {%- if section.settings.text != blank -%}
+        <p class="category-product-edit__text">{{ section.settings.text }}</p>
+      {%- endif -%}
+    </div>
+
+    <div class="category-product-edit__tabs" role="tablist" aria-label="Product categories">
+      {%- for block in section.blocks -%}
+        <a href="#CategoryEdit-{{ section.id }}-{{ forloop.index }}" class="category-product-edit__tab{% if forloop.first %} is-active{% endif %}" data-category-tab {{ block.shopify_attributes }}>
+          <span>{{ block.settings.eyebrow | default: forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+          {{ block.settings.heading }}
+        </a>
+      {%- endfor -%}
+    </div>
+
+    <div class="category-product-edit__sections">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign keyword = block.settings.keyword | downcase | strip
+          assign category_collection = block.settings.collection
+          assign shown = 0
+        -%}
+        <article id="CategoryEdit-{{ section.id }}-{{ forloop.index }}" class="category-product-edit__panel{% if forloop.first %} is-active{% endif %}" data-category-panel>
+          <div class="category-product-edit__panel-head">
+            <span>{{ block.settings.eyebrow }}</span>
+            <h3>{{ block.settings.heading }}</h3>
+            <p>{{ block.settings.text }}</p>
+          </div>
+
+          <div class="category-product-edit__grid">
+            {%- if category_collection != blank -%}
+              {%- for product in category_collection.products limit: section.settings.products_per_category -%}
+                {%- assign shown = shown | plus: 1 -%}
+                <div class="category-product-edit__item{% if forloop.first %} category-product-edit__item--feature{% endif %}">
+                  {%- render 'product-card', product: product -%}
+                </div>
+              {%- endfor -%}
+            {%- else -%}
+              {%- for product in collections.all.products -%}
+                {%- liquid
+                  assign type_downcase = product.type | downcase
+                  assign title_downcase = product.title | downcase
+                  assign tags_downcase = product.tags | join: ' ' | downcase
+                  assign matches = false
+                  if keyword == blank
+                    assign matches = true
+                  elsif type_downcase contains keyword or title_downcase contains keyword or tags_downcase contains keyword
+                    assign matches = true
+                  endif
+                -%}
+                {%- if matches and shown < section.settings.products_per_category -%}
+                  {%- assign shown = shown | plus: 1 -%}
+                  <div class="category-product-edit__item{% if shown == 1 %} category-product-edit__item--feature{% endif %}">
+                    {%- render 'product-card', product: product -%}
+                  </div>
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+
+            {%- if shown == 0 -%}
+              {%- for product in collections.all.products limit: section.settings.products_per_category -%}
+                <div class="category-product-edit__item{% if forloop.first %} category-product-edit__item--feature{% endif %}">
+                  {%- render 'product-card', product: product -%}
+                </div>
+              {%- else -%}
+                <div class="category-product-edit__empty">
+                  <p>{{ section.settings.empty_text }}</p>
+                  <a class="button" href="{{ routes.all_products_collection_url }}">Shop all</a>
+                </div>
+              {%- endfor -%}
+            {%- endif -%}
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Category product edit",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Shop by category" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Built by category" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Fast entry points for the product families customers naturally scan first." },
+    { "type": "range", "id": "products_per_category", "label": "Products per category", "min": 3, "max": 8, "step": 1, "default": 5 },
+    { "type": "text", "id": "empty_text", "label": "Empty text", "default": "Products will appear here once this category has matching items." }
+  ],
+  "blocks": [
+    {
+      "type": "category_block",
+      "name": "Category",
+      "settings": [
+        { "type": "text", "id": "eyebrow", "label": "Number", "default": "01" },
+        { "type": "text", "id": "heading", "label": "Heading", "default": "Tops" },
+        { "type": "text", "id": "keyword", "label": "Keyword fallback", "default": "top" },
+        { "type": "collection", "id": "collection", "label": "Collection override" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "A clean edit of the pieces people reach for first." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category product edit",
+      "blocks": [
+        { "type": "category_block", "settings": { "eyebrow": "01", "heading": "Tops", "keyword": "top" } },
+        { "type": "category_block", "settings": { "eyebrow": "02", "heading": "Bottoms", "keyword": "bottom" } },
+        { "type": "category_block", "settings": { "eyebrow": "03", "heading": "Accessories", "keyword": "accessor" } },
+        { "type": "category_block", "settings": { "eyebrow": "04", "heading": "New drops", "keyword": "new" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

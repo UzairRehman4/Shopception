@@ -1,0 +1,268 @@
+/* Premium Diamond final palette */
+:root {
+  --pd-red: #9e2b25;
+  --pd-plum: #51355a;
+  --pd-cream: #fff8f0;
+  --pd-lavender: #a984af;
+  --pd-sage: var(--pd-lavender);
+  --pd-ink: #211923;
+  --pd-muted: #746474;
+  --pd-line: rgba(81, 53, 90, .18);
+
+  --p26-bg: var(--pd-cream);
+  --p26-paper: #ffffff;
+  --p26-ink: var(--pd-ink);
+  --p26-soft: var(--pd-muted);
+  --p26-line: var(--pd-line);
+  --p26-gold: var(--pd-lavender);
+  --p26-olive: var(--pd-lavender);
+  --p26-charcoal: var(--pd-plum);
+  --p26-red: var(--pd-red);
+  --p26-chrome: #efe6f1;
+  --color-background: var(--pd-cream);
+  --color-foreground: var(--pd-ink);
+  --color-muted: var(--pd-muted);
+  --color-accent: var(--pd-red);
+  --color-surface: #f2e7f3;
+  --color-ink-soft: var(--pd-plum);
+  --section-bg: var(--pd-cream);
+  --section-paper: #ffffff;
+  --section-ink: var(--pd-ink);
+  --section-soft: var(--pd-muted);
+  --section-accent: var(--pd-red);
+}
+
+body,
+.main-content {
+  background:
+    linear-gradient(180deg, rgba(255, 248, 240, 1), rgba(255, 248, 240, .96)),
+    radial-gradient(circle at 12% 18%, rgba(169, 132, 175, .16), transparent 28%),
+    radial-gradient(circle at 88% 42%, rgba(169, 132, 175, .14), transparent 26%);
+  color: var(--pd-ink);
+}
+
+.section,
+.category-product-edit,
+.flowbit-collection {
+  background: var(--pd-cream);
+  --section-bg: var(--pd-cream);
+  --section-ink: var(--pd-ink);
+  --section-soft: var(--pd-muted);
+  --section-accent: var(--pd-red);
+}
+
+.home-premium-slider,
+.premium-brand-lab,
+.protect-marquee,
+.premium-footer {
+  --section-bg: var(--pd-plum);
+  --section-ink: var(--pd-cream);
+  --section-soft: #e7d4ea;
+  --section-accent: var(--pd-lavender);
+}
+
+.featured-collection,
+.collection-page {
+  background:
+    linear-gradient(180deg, rgba(255, 248, 240, .98), rgba(255, 248, 240, 1)),
+    radial-gradient(circle at 90% 12%, rgba(169, 132, 175, .12), transparent 24%);
+}
+
+.promo-mosaic {
+  background:
+    linear-gradient(180deg, rgba(255, 248, 240, 1), rgba(242, 231, 243, .5)),
+    var(--pd-cream);
+}
+
+.collection-story {
+  background:
+    linear-gradient(180deg, rgba(242, 231, 243, .72), rgba(255, 248, 240, 1)),
+    var(--pd-cream);
+}
+
+.announcement-bar,
+.site-footer,
+.premium-footer,
+.protect-marquee,
+.premium-brand-lab,
+.premium-brand-lab__point,
+.category-product-edit__panel-head,
+.flowbit-collection__viewbar,
+.collection-layout-switcher button.is-active,
+.category-product-edit__tab.is-active,
+.category-product-edit__tab:hover {
+  background: var(--pd-plum);
+  color: var(--pd-cream);
+}
+
+.site-header {
+  background: rgba(255, 248, 240, .9);
+  border-color: var(--pd-line);
+}
+
+.site-header.is-scrolled,
+.drawer__panel,
+.flowbit-sort,
+.collection-layout-switcher,
+.flowbit-filter__panel,
+.flowbit-collection__hero-meta span,
+.flowbit-collection__hero-meta a,
+.home-premium-slider__side-card {
+  background: rgba(255, 248, 240, .94);
+}
+
+.button,
+.product-form__submit,
+.home-premium-slider__form .button {
+  background: var(--pd-plum);
+  border-color: var(--pd-plum);
+  color: var(--pd-cream);
+}
+
+.button:hover,
+.product-form__submit:hover,
+.home-premium-slider__form .button:hover {
+  background: var(--pd-red);
+  border-color: var(--pd-red);
+  color: #fff;
+}
+
+.button--secondary {
+  background: transparent;
+  color: var(--pd-plum);
+}
+
+.button--secondary:hover {
+  background: var(--pd-lavender);
+  border-color: var(--pd-lavender);
+  color: var(--pd-ink);
+}
+
+.eyebrow,
+.flowbit-collection__hero p,
+.category-product-edit__tab span,
+.section__header::before,
+.product-page__status--out {
+  color: var(--pd-red);
+}
+
+.premium-brand-lab .eyebrow,
+.premium-brand-lab__stats span,
+.premium-brand-lab__point > span,
+.category-product-edit__panel-head span,
+.flowbit-collection__viewbar span,
+.category-product-edit__tab.is-active span,
+.category-product-edit__tab:hover span,
+.protect-marquee__heading p {
+  color: var(--pd-lavender);
+}
+
+.product-card__media,
+.category-product-edit__empty,
+.promo-mosaic__tile,
+.editorial-split__media,
+.product-page__media-item {
+  background:
+    linear-gradient(135deg, rgba(169, 132, 175, .22), rgba(255, 248, 240, .88) 48%, rgba(169, 132, 175, .28)),
+    var(--pd-cream);
+  border-color: var(--pd-line);
+}
+
+.home-premium-slider {
+  background: var(--pd-plum);
+}
+
+.home-premium-slider__media::after {
+  background:
+    linear-gradient(90deg, rgba(81, 53, 90, .82), rgba(81, 53, 90, .14) 48%, rgba(158, 43, 37, .36)),
+    linear-gradient(0deg, rgba(81, 53, 90, .62), transparent 58%);
+}
+
+.home-premium-slider__copy .button {
+  background: var(--pd-cream);
+  border-color: var(--pd-cream);
+  color: var(--pd-plum);
+}
+
+.home-premium-slider__copy .button:hover {
+  background: var(--pd-red);
+  border-color: var(--pd-red);
+  color: #fff;
+}
+
+.badge--new,
+.collection-layout-switcher button.is-active span {
+  background: var(--pd-lavender) !important;
+  color: var(--pd-ink) !important;
+}
+
+.badge--sale,
+.product-sale-pill {
+  background: var(--pd-red) !important;
+  color: #fff !important;
+}
+
+.badge--sold-out {
+  background: var(--pd-plum) !important;
+  color: var(--pd-cream) !important;
+}
+
+.stock-dot::before,
+.filter-choice input,
+.flowbit-product .variant-picker__button[aria-pressed=true] {
+  accent-color: var(--pd-lavender);
+}
+
+.collection-story__media:empty {
+  background: linear-gradient(150deg, var(--pd-plum), var(--pd-lavender) 48%, var(--pd-red));
+}
+
+.collection-story__card:nth-child(2) .collection-story__media:empty {
+  background: linear-gradient(150deg, var(--pd-cream), var(--pd-lavender) 48%, var(--pd-plum));
+}
+
+.collection-story__card:nth-child(3) .collection-story__media:empty {
+  background: linear-gradient(150deg, var(--pd-plum), var(--pd-red) 54%, var(--pd-lavender));
+}
+
+.promo-mosaic__media:empty {
+  background: linear-gradient(135deg, var(--pd-plum), var(--pd-lavender) 52%, var(--pd-cream));
+}
+
+.promo-mosaic__tile:nth-child(2) .promo-mosaic__media:empty {
+  background: linear-gradient(135deg, var(--pd-cream), var(--pd-lavender) 48%, var(--pd-plum));
+}
+
+.promo-mosaic__tile:nth-child(3) .promo-mosaic__media:empty {
+  background: linear-gradient(135deg, var(--pd-plum), var(--pd-red) 58%, var(--pd-lavender));
+}
+
+.flowbit-collection__hero::before {
+  background:
+    linear-gradient(135deg, rgba(81, 53, 90, .12), rgba(158, 43, 37, .12)),
+    url("data:image/svg+xml,%3Csvg width='520' height='300' viewBox='0 0 520 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%2351355A' stroke-opacity='.24'%3E%3Cpath d='M20 150h480M260 20v260M260 20 500 150 260 280 20 150Z'/%3E%3Cpath d='M120 80h280v140H120z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.home-premium-slider::after,
+.premium-brand-lab::before,
+.collection-story::before,
+.promo-mosaic::before,
+.protect-marquee::before,
+.premium-footer::before {
+  background-image: url("data:image/svg+xml,%3Csvg width='360' height='360' viewBox='0 0 360 360' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23A984AF' stroke-width='1.2' stroke-opacity='.62'%3E%3Cpath d='M180 18 306 180 180 342 54 180Z'/%3E%3Cpath d='M180 58 258 180 180 302 102 180Z'/%3E%3Cpath d='M18 180h324M180 18v324M78 78l204 204M282 78 78 282'/%3E%3C/g%3E%3Ccircle cx='180' cy='180' r='18' fill='%239E2B25' fill-opacity='.2'/%3E%3C/svg%3E");
+}
+
+.premium-brand-lab::after,
+.promo-mosaic::after {
+  background-image: url("data:image/svg+xml,%3Csvg width='420' height='420' viewBox='0 0 420 420' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%23FFF8F0' stroke-width='1' stroke-opacity='.42'%3E%3Cpath d='M210 22 386 210 210 398 34 210Z'/%3E%3Cpath d='M210 22 266 210 210 398 154 210Z'/%3E%3Cpath d='M34 210h352M80 116h260M80 304h260'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.flowbit-collection__grid.is-dense .product-card__media {
+  background: linear-gradient(135deg, rgba(169, 132, 175, .32), rgba(255, 248, 240, .9));
+}
+
+@media (max-width: 749px) {
+  .site-header {
+    background: rgba(255, 248, 240, .96);
+  }
+}

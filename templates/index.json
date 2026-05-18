@@ -15,74 +15,142 @@
         "slide_1": {
           "type": "slide",
           "settings": {
-            "eyebrow": "01 / New editorial drop",
-            "heading": "New drop out now",
-            "text": "shop now",
-            "button_label": "",
-            "button_link": ""
+            "eyebrow": "01 / Campaign system",
+            "heading": "Built like equipment. Worn like status.",
+            "text": "Premium layers, sharp staples, and daily rotation pieces with a luxury sport finish.",
+            "button_label": "Shop the system",
+            "button_link": "/collections/all",
+            "collection": "all",
+            "collection_label": "Uniform edit"
           }
         },
         "slide_2": {
           "type": "slide",
           "settings": {
-            "eyebrow": "02 / Campaign ready",
-            "heading": "Protect the uniform",
-            "text": "shop now",
-            "button_label": "",
-            "button_link": ""
+            "eyebrow": "02 / Movement edit",
+            "heading": "Move sharp. Land clean.",
+            "text": "Sport-coded silhouettes, street-level finish, and a cleaner way to shop the drop.",
+            "button_label": "Explore the drop",
+            "button_link": "/collections/all",
+            "collection": "all",
+            "collection_label": "Motion edit"
           }
         },
         "slide_3": {
           "type": "slide",
           "settings": {
-            "eyebrow": "03 / Fast checkout",
-            "heading": "Built for every day",
-            "text": "shop now",
-            "button_label": "",
-            "button_link": ""
+            "eyebrow": "03 / Accessories",
+            "heading": "Finish the signal.",
+            "text": "Caps, socks, bags, and small details that make the full fit feel intentional.",
+            "button_label": "Shop accessories",
+            "button_link": "/collections/all",
+            "collection": "all",
+            "collection_label": "Finishing pieces"
+          }
+        },
+        "slide_4": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "04 / Night collection",
+            "heading": "After-dark essentials.",
+            "text": "Deep plum, wine red, sage, and warm cream shaped into a sharper evening uniform.",
+            "button_label": "Shop evening edit",
+            "button_link": "/collections/all",
+            "collection": "all",
+            "collection_label": "Night edit"
+          }
+        },
+        "slide_5": {
+          "type": "slide",
+          "settings": {
+            "eyebrow": "05 / New arrivals",
+            "heading": "Fresh pieces. First look.",
+            "text": "A premium new-in banner built for quick decisions, strong visuals, and fast checkout.",
+            "button_label": "View new arrivals",
+            "button_link": "/collections/all",
+            "collection": "all",
+            "collection_label": "New-in rotation"
           }
         }
       },
-      "block_order": ["slide_1", "slide_2", "slide_3"],
+      "block_order": ["slide_1", "slide_2", "slide_3", "slide_4", "slide_5"],
       "settings": {}
     },
     "featured_collection": {
       "type": "featured-collection",
       "settings": {
-        "heading": "Latest arrivals",
+        "heading": "The current cut",
+        "eyebrow": "Premium product wall",
+        "text": "A product-first shopping wall with save buttons, quick view, quick add, filter chips, layout modes, and fast comparison signals.",
         "collection": "all",
-        "products_to_show": 8
+        "products_to_show": 16
+      }
+    },
+    "category_edit": {
+      "type": "category-product-edit",
+      "blocks": {
+        "cat_1": { "type": "category_block", "settings": { "eyebrow": "01", "heading": "Tops", "keyword": "top", "text": "Premium upper-body staples with strong product focus and easy scanning." } },
+        "cat_2": { "type": "category_block", "settings": { "eyebrow": "02", "heading": "Bottoms", "keyword": "bottom", "text": "Clean silhouettes, relaxed utility, and daily rotation pieces." } },
+        "cat_3": { "type": "category_block", "settings": { "eyebrow": "03", "heading": "Accessories", "keyword": "accessor", "text": "Small details that make the whole fit feel intentional." } },
+        "cat_4": { "type": "category_block", "settings": { "eyebrow": "04", "heading": "New drops", "keyword": "new", "text": "The freshest pieces in the system, merchandised for fast decisions." } }
+      },
+      "block_order": ["cat_1", "cat_2", "cat_3", "cat_4"],
+      "settings": {
+        "eyebrow": "Shop by category",
+        "heading": "Find your piece fast.",
+        "text": "A cleaner route into Tops, Bottoms, Accessories, and new drop energy without making customers hunt through one flat product wall.",
+        "products_per_category": 5
+      }
+    },
+    "brand_lab": {
+      "type": "premium-brand-lab",
+      "blocks": {
+        "point_1": { "type": "point", "settings": { "number": "01", "heading": "Material first", "text": "Every product detail is framed like performance kit: weight, fit, finish, and daily durability." } },
+        "point_2": { "type": "point", "settings": { "number": "02", "heading": "House standard", "text": "A restrained premium feel with warm hospitality language, designed to make shopping feel calm and considered." } },
+        "point_3": { "type": "point", "settings": { "number": "03", "heading": "Cultural signal", "text": "Sharp campaign rhythm, drop language, and community cues give the brand more energy than a standard luxury store." } }
+      },
+      "block_order": ["point_1", "point_2", "point_3"],
+      "settings": {
+        "eyebrow": "The diamond standard",
+        "heading": "Premium, technical, cultural.",
+        "text": "A store system shaped by European performance retail, LA product-lab confidence, modern house-level storytelling, and youth-culture momentum.",
+        "stat_1": "2026",
+        "stat_label_1": "New era",
+        "stat_2": "03",
+        "stat_label_2": "Core edits",
+        "stat_3": "24/7",
+        "stat_label_3": "Everyday uniform"
       }
     },
     "collection_story": {
       "type": "collection-story",
       "blocks": {
-        "card_1": { "type": "card", "settings": { "eyebrow": "01", "heading": "Tailored layers", "link_label": "Shop layers", "link": "/collections/all" } },
-        "card_2": { "type": "card", "settings": { "eyebrow": "02", "heading": "Soft neutrals", "link_label": "Shop neutrals", "link": "/collections/all" } },
-        "card_3": { "type": "card", "settings": { "eyebrow": "03", "heading": "Evening ease", "link_label": "Shop evening", "link": "/collections/all" } }
+        "card_1": { "type": "card", "settings": { "eyebrow": "01 / Precision", "heading": "Performance codes", "link_label": "Shop technical", "link": "/collections/all" } },
+        "card_2": { "type": "card", "settings": { "eyebrow": "02 / Provenance", "heading": "House classics", "link_label": "Shop essentials", "link": "/collections/all" } },
+        "card_3": { "type": "card", "settings": { "eyebrow": "03 / Pulse", "heading": "Drop energy", "link_label": "Shop drops", "link": "/collections/all" } }
       },
       "block_order": ["card_1", "card_2", "card_3"],
-      "settings": { "heading": "Shop by mood" }
+      "settings": { "heading": "Shop the codes" }
     },
     "promo_mosaic": {
       "type": "promo-mosaic",
       "blocks": {
-        "tile_1": { "type": "tile", "settings": { "size": "large", "eyebrow": "Drop 01", "heading": "Modern tailoring", "text": "Refined silhouette work for day and night.", "link_label": "Shop tailoring", "link": "/collections/all" } },
-        "tile_2": { "type": "tile", "settings": { "size": "small", "eyebrow": "Drop 02", "heading": "Lounge essentials", "text": "Soft textures with polished fits.", "link_label": "Shop essentials", "link": "/collections/all" } },
-        "tile_3": { "type": "tile", "settings": { "size": "small", "eyebrow": "Drop 03", "heading": "Evening layers", "text": "Elevated pieces for after-dark edits.", "link_label": "Shop evening", "link": "/collections/all" } }
+        "tile_1": { "type": "tile", "settings": { "size": "large", "eyebrow": "Lab note 01", "heading": "Designed under pressure", "text": "A technical merchandising moment inspired by product labs, weight charts, and performance retail grids.", "link_label": "Enter the lab", "link": "/collections/all" } },
+        "tile_2": { "type": "tile", "settings": { "size": "small", "eyebrow": "House note 02", "heading": "Made to feel collected", "text": "Warm premium copy, calm spacing, and strong product storytelling.", "link_label": "Shop essentials", "link": "/collections/all" } },
+        "tile_3": { "type": "tile", "settings": { "size": "small", "eyebrow": "Signal 03", "heading": "For the front row", "text": "Drop-first language with enough edge to feel alive.", "link_label": "Shop drops", "link": "/collections/all" } }
       },
       "block_order": ["tile_1", "tile_2", "tile_3"],
-      "settings": { "heading": "Merchandising moments" }
+      "settings": { "heading": "Inside the build" }
     },
     "protect_marquee": {
       "type": "protect-marquee",
       "settings": {
-        "eyebrow": "Follow the uniform",
-        "heading": "@protect.ldn",
+        "eyebrow": "Follow the signal",
+        "heading": "@premiumdiamond",
         "link": "https://www.instagram.com/protect.ldn",
         "speed": 40
       }
     }
   },
-  "order": ["premium_slider", "featured_collection", "collection_story", "promo_mosaic", "protect_marquee"]
+  "order": ["premium_slider", "category_edit", "featured_collection", "brand_lab", "collection_story", "promo_mosaic", "protect_marquee"]
 }
