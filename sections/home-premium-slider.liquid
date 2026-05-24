@@ -6,6 +6,7 @@
         assign product = block.settings.product
         assign current_variant = product.selected_or_first_available_variant
         assign slide_collection = block.settings.collection
+        assign external_video_url = block.settings.external_video_url
         assign cta_link = block.settings.button_link
         if cta_link == blank and slide_collection != blank
           assign cta_link = slide_collection.url
@@ -13,7 +14,11 @@
       -%}
       <article class="home-premium-slider__slide{% if forloop.first %} is-active{% endif %}" data-home-slide data-slide-index="{{ forloop.index0 }}" {{ block.shopify_attributes }}>
         <div class="home-premium-slider__media">
-          {%- if block.settings.video != blank -%}
+          {%- if external_video_url != blank -%}
+            <video autoplay loop muted playsinline preload="metadata" data-external-campaign-video>
+              <source src="{{ external_video_url | escape }}" type="video/mp4">
+            </video>
+          {%- elsif block.settings.video != blank -%}
             {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, preload: 'metadata' }}
           {%- elsif block.settings.image != blank -%}
             {{ block.settings.image | image_url: width: 2400 | image_tag: widths: '750, 1100, 1600, 2200, 2400', loading: 'eager', sizes: '100vw' }}
@@ -46,6 +51,11 @@
               <span class="home-premium-slider__poster-line"></span>
             </div>
           {%- endif -%}
+          <div class="home-premium-slider__media-stack" aria-hidden="true">
+            <img src="https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=520&q=82" alt="" loading="eager" width="520" height="700">
+            <img src="https://images.unsplash.com/photo-1496747611176-843222e1e57c?auto=format&fit=crop&w=520&q=82" alt="" loading="eager" width="520" height="700">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=520&q=82" alt="" loading="eager" width="520" height="700">
+          </div>
         </div>
 
         <div class="home-premium-slider__content page-width">
@@ -59,6 +69,9 @@
             {%- endif -%}
             {%- if block.settings.button_label != blank and cta_link != blank -%}
               <a class="button" href="{{ cta_link }}">{{ block.settings.button_label }}</a>
+            {%- endif -%}
+            {%- if block.settings.video_source_link != blank -%}
+              <a class="home-premium-slider__source" href="{{ block.settings.video_source_link }}" target="_blank" rel="noopener">Video reference</a>
             {%- endif -%}
           </div>
 
@@ -143,6 +156,8 @@
       "settings": [
         { "type": "image_picker", "id": "image", "label": "Image" },
         { "type": "video", "id": "video", "label": "Video" },
+        { "type": "url", "id": "external_video_url", "label": "External MP4 URL" },
+        { "type": "url", "id": "video_source_link", "label": "Video reference link" },
         { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "New collection" },
         { "type": "text", "id": "heading", "label": "Heading", "default": "Designed for motion and commerce" },
         { "type": "textarea", "id": "text", "label": "Text", "default": "A premium landing moment with immersive media, quick shopping, and smooth storytelling." },

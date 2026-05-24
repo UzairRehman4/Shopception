@@ -4,7 +4,7 @@
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const isModifiedClick = (event) => event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
   let isTransitioning = false;
-  const duration = 400;
+  const duration = 540;
 
   const createWipe = () => {
     let wipe = document.querySelector('[data-pt-wipe]');
@@ -67,7 +67,8 @@
     if (!link || isModifiedClick(event)) return true;
     if (event.defaultPrevented) return true;
     if (link.target || link.hasAttribute('download')) return true;
-    if (link.closest('[data-drawer]') || link.closest('.product-media-trigger')) return true;
+    if (link.closest('[data-drawer]') || link.closest('.drawer') || link.closest('.product-media-trigger')) return true;
+    if (link.closest('[data-drawer-open]') || link.closest('[data-drawer-close]') || link.closest('[data-add-to-cart]')) return true;
 
     const href = link.getAttribute('href');
     if (!href || href.startsWith('#') || href.startsWith('mailto:') || href.startsWith('tel:')) return true;
@@ -81,7 +82,6 @@
 
   document.addEventListener('DOMContentLoaded', () => {
     createWipe();
-    enter();
 
     document.addEventListener('click', (event) => {
       const link = event.target.closest('a[href]');

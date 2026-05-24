@@ -17,6 +17,7 @@
     </header>
 
     {%- paginate collection.products by section.settings.products_per_page -%}
+      <div class="flowbit-collection__shell">
       <form class="flowbit-collection__toolbar" method="get">
         {%- if collection.current_vendor or collection.current_type -%}
           <input type="hidden" name="q" value="{{ collection.current_vendor | default: collection.current_type | escape }}">
@@ -105,6 +106,8 @@
         </button>
       </form>
 
+      <div class="flowbit-collection__main">
+
       {%- if collection.filters.size > 0 -%}
         <div class="active-filters flowbit-active-filters">
           {%- for filter in collection.filters -%}
@@ -151,6 +154,8 @@
           <a class="button" href="{{ routes.all_products_collection_url }}">{{ 'general.continue_shopping' | t }}</a>
         </div>
       {%- endif -%}
+      </div>
+      </div>
     {%- endpaginate -%}
   </div>
 

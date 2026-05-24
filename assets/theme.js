@@ -148,23 +148,30 @@ const themeCart = {
     oldToast?.remove();
 
     const toast = document.createElement('div');
-    toast.className = 'cart-toast';
+    toast.className = 'cart-toast cart-toast--premium';
     toast.setAttribute('data-cart-toast', '');
     toast.setAttribute('role', 'status');
     toast.innerHTML = `
-      <span aria-hidden="true">+</span>
-      <div>
-        <strong>Added to cart</strong>
-        ${title ? `<p>${escapeHtml(title)}</p>` : ''}
+      <span class="cart-toast__icon" aria-hidden="true">✓</span>
+      <div class="cart-toast__copy">
+        <strong>${title && title.includes('Could not') ? 'Action needed' : title && title.includes('wishlist') ? 'Wishlist updated' : 'Added to bag'}</strong>
+        ${title ? `<p>${escapeHtml(title)}</p>` : '<p>Your product is ready in the cart.</p>'}
       </div>
+      <button type="button" class="cart-toast__button" data-cart-toast-open>View bag</button>
     `;
     document.body.append(toast);
+    toast.querySelector('[data-cart-toast-open]')?.addEventListener('click', () => {
+      const trigger = document.querySelector('[data-cart-trigger]');
+      const drawer = drawers.get('cart-drawer');
+      drawer?.open(trigger);
+      toast.remove();
+    });
 
     requestAnimationFrame(() => toast.classList.add('is-visible'));
     window.setTimeout(() => {
       toast.classList.remove('is-visible');
       window.setTimeout(() => toast.remove(), 260);
-    }, 1800);
+    }, 3200);
   },
 
   render(cart) {
@@ -326,13 +333,21 @@ class ProductForm extends HTMLElement {
 
     this.variantSelect = this.form.querySelector('[data-card-variant-select]');
     this.defaultText = this.button.textContent.trim();
+    this.initiallyDisabled = this.button.disabled;
     this.variantSelect?.addEventListener('change', () => this.syncVariantState());
     this.syncVariantState();
     this.form.addEventListener('submit', this.onSubmit.bind(this));
   }
 
   syncVariantState() {
-    if (!this.variantSelect || !this.button) return;
+    if (!this.button) return;
+
+    if (!this.variantSelect) {
+      this.button.disabled = this.initiallyDisabled;
+      this.button.textContent = this.defaultText || window.theme?.strings?.addToCart || 'Add to cart';
+      return;
+    }
+
     const option = this.variantSelect.selectedOptions[0];
     const available = option?.dataset.available !== 'false' && !option?.disabled;
     this.button.disabled = !available;
@@ -369,7 +384,12 @@ class ProductForm extends HTMLElement {
       this.button.classList.add('is-added');
       themeCart.flash(item.product_title);
       try {
-        await themeCart.refresh(true);
+        await themeCart.refresh(false);
+        window.setTimeout(() => {
+          const trigger = document.querySelector('[data-cart-trigger]');
+          const drawer = drawers.get('cart-drawer');
+          drawer?.open(trigger);
+        }, window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 520);
       } catch (refreshError) {
         console.warn(refreshError.message);
         document.querySelectorAll('[data-cart-count]').forEach((count) => {
@@ -390,6 +410,7 @@ class ProductForm extends HTMLElement {
         this.button.textContent = originalText;
         this.button.classList.remove('is-added');
         this.button.removeAttribute('aria-busy');
+        this.button.disabled = false;
         this.syncVariantState();
       }, 700);
     }
@@ -397,19 +418,24 @@ class ProductForm extends HTMLElement {
 
   animateToCart() {
     const scope = this.closest('.product-card, .home-premium-slider__side-card, .premium-search-product, .product-page');
-    const image = scope?.querySelector('img');
     const cart = document.querySelector('[data-cart-trigger]');
-    if (!image || !cart || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!scope || !cart || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-    const from = image.getBoundingClientRect();
+    const media = scope.querySelector('.product-card__media, img');
+    const from = (media || this.button).getBoundingClientRect();
     const to = cart.getBoundingClientRect();
-    const ghost = image.cloneNode();
-    ghost.style.cssText = `position:fixed;left:${from.left}px;top:${from.top}px;width:${from.width}px;height:${from.height}px;object-fit:cover;z-index:2147482000;pointer-events:none;border-radius:0;box-shadow:0 18px 40px rgba(0,0,0,.22);`;
+    const ghost = document.createElement('span');
+    ghost.className = 'cart-flyout-ghost';
+    ghost.style.left = `${from.left + from.width / 2}px`;
+    ghost.style.top = `${from.top + from.height / 2}px`;
+    ghost.style.setProperty('--cart-fly-x', `${to.left + to.width / 2 - (from.left + from.width / 2)}px`);
+    ghost.style.setProperty('--cart-fly-y', `${to.top + to.height / 2 - (from.top + from.height / 2)}px`);
     document.body.appendChild(ghost);
     const animation = ghost.animate([
-      { transform: 'translate3d(0,0,0) scale(1)', opacity: 1 },
-      { transform: `translate3d(${to.left - from.left}px,${to.top - from.top}px,0) scale(.08)`, opacity: .12 }
-    ], { duration: 620, easing: 'cubic-bezier(.2,.8,.2,1)' });
+      { transform: 'translate3d(-50%,-50%,0) scale(1)', opacity: 0 },
+      { transform: 'translate3d(-50%,-50%,0) scale(1.28)', opacity: 1, offset: .16 },
+      { transform: 'translate3d(calc(-50% + var(--cart-fly-x)), calc(-50% + var(--cart-fly-y)), 0) scale(.28)', opacity: .18 }
+    ], { duration: 640, easing: 'cubic-bezier(.16,1,.3,1)' });
     animation.onfinish = () => ghost.remove();
   }
 }

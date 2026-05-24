@@ -518,13 +518,6 @@
         animateCells();
       });
 
-      qsa('[data-wishlist-toggle]', wall).forEach((button) => {
-        button.addEventListener('click', () => {
-          button.classList.toggle('is-active');
-          button.querySelector('span')?.replaceChildren(button.classList.contains('is-active') ? '♥' : '♡');
-        });
-      });
-
       if (!quickView) return;
       const image = quickView.querySelector('[data-quick-view-image]');
       const title = quickView.querySelector('[data-quick-view-title]');

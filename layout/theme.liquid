@@ -58,6 +58,7 @@
     {{ 'search-experience.css' | asset_url | stylesheet_tag }}
     {{ 'footer-professional.css' | asset_url | stylesheet_tag }}
     {{ 'store-dynamic-fixes.css' | asset_url | stylesheet_tag }}
+    {{ 'homepage-premium-polish.css' | asset_url | stylesheet_tag }}
     <script>
       window.theme = {
         moneyFormat: {{ shop.money_format | json }},
@@ -83,6 +84,7 @@
     <script src="{{ 'premium-2026.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'page-transition-premium.js' | asset_url }}" defer="defer"></script>
     <script src="{{ 'home-premium-slider.js' | asset_url }}" defer="defer"></script>
+    <script src="{{ 'homepage-premium-polish.js' | asset_url }}" defer="defer"></script>
   </head>
 
   <body class="template-{{ template.name | handle }}">

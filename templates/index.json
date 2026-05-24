@@ -15,61 +15,71 @@
         "slide_1": {
           "type": "slide",
           "settings": {
-            "eyebrow": "01 / Campaign system",
-            "heading": "Built like equipment. Worn like status.",
-            "text": "Premium layers, sharp staples, and daily rotation pieces with a luxury sport finish.",
-            "button_label": "Shop the system",
+            "eyebrow": "Premium Diamond / Clothing",
+            "heading": "Clothing",
+            "text": "New arrivals, everyday layers, oversized fits, accessories, and complete looks in a clean lavender shopping system.",
+            "button_label": "Shop all clothing",
             "button_link": "/collections/all",
             "collection": "all",
-            "collection_label": "Uniform edit"
+            "collection_label": "Campaign edit",
+            "external_video_url": "https://assets.mixkit.co/videos/preview/mixkit-woman-modeling-a-short-black-dress-805-large.mp4",
+            "video_source_link": "https://mixkit.co/free-stock-video/fashion/"
           }
         },
         "slide_2": {
           "type": "slide",
           "settings": {
-            "eyebrow": "02 / Movement edit",
-            "heading": "Move sharp. Land clean.",
-            "text": "Sport-coded silhouettes, street-level finish, and a cleaner way to shop the drop.",
-            "button_label": "Explore the drop",
+            "eyebrow": "Premium Diamond / Essentials",
+            "heading": "Essentials",
+            "text": "Hoodies, tees, cargos, jackets, and rotation pieces organized for fast browsing.",
+            "button_label": "Shop essentials",
             "button_link": "/collections/all",
             "collection": "all",
-            "collection_label": "Motion edit"
+            "collection_label": "Essential edit",
+            "external_video_url": "https://assets.mixkit.co/videos/preview/mixkit-taking-photos-from-different-angles-of-a-model-34421-large.mp4",
+            "video_source_link": "https://www.pexels.com/search/videos/fashion%20model/"
           }
         },
         "slide_3": {
           "type": "slide",
           "settings": {
-            "eyebrow": "03 / Accessories",
-            "heading": "Finish the signal.",
-            "text": "Caps, socks, bags, and small details that make the full fit feel intentional.",
-            "button_label": "Shop accessories",
+            "eyebrow": "Premium Diamond / Accessories",
+            "heading": "Accessories",
+            "text": "Caps, socks, bags, and detail pieces that complete the fit.",
+            "button_label": "Complete the look",
             "button_link": "/collections/all",
             "collection": "all",
-            "collection_label": "Finishing pieces"
+            "collection_label": "Styling edit",
+            "external_video_url": "https://assets.mixkit.co/videos/preview/mixkit-woman-holds-up-shirt-in-shopping-mall-mirror-9165-large.mp4",
+            "video_source_link": "https://pixabay.com/videos/search/clothing%20model/"
           }
         },
         "slide_4": {
           "type": "slide",
           "settings": {
-            "eyebrow": "04 / Night collection",
-            "heading": "After-dark essentials.",
-            "text": "Deep plum, wine red, sage, and warm cream shaped into a sharper evening uniform.",
-            "button_label": "Shop evening edit",
+            "eyebrow": "Premium Diamond / Purple edit",
+            "heading": "Purple edit",
+            "text": "Lavender contrast, deep plum details, and clean product focus.",
+            "button_label": "Shop evening",
             "button_link": "/collections/all",
             "collection": "all",
-            "collection_label": "Night edit"
+            "collection_label": "Evening edit",
+            "external_video_url": "https://assets.mixkit.co/videos/preview/mixkit-winter-fashion-cold-looking-woman-concept-video-39874-large.mp4",
+            "video_source_link": "https://coverr.co/stock-video-footage/fashion"
           }
         },
         "slide_5": {
           "type": "slide",
           "settings": {
-            "eyebrow": "05 / New arrivals",
-            "heading": "Fresh pieces. First look.",
-            "text": "A premium new-in banner built for quick decisions, strong visuals, and fast checkout.",
-            "button_label": "View new arrivals",
+            "eyebrow": "Premium Diamond / New in",
+            "heading": "New in",
+            "text": "Fresh pieces shown in a Nike-style shopping rhythm with fewer distractions.",
+            "button_label": "View arrivals",
             "button_link": "/collections/all",
             "collection": "all",
-            "collection_label": "New-in rotation"
+            "collection_label": "New-in rotation",
+            "external_video_url": "https://assets.mixkit.co/videos/preview/mixkit-model-turns-to-pose-as-a-photographer-takes-photos-in-50641-large.mp4",
+            "video_source_link": "https://pixabay.com/videos/modeling-model-fashion-model-267242/"
           }
         }
       },
@@ -80,8 +90,8 @@
       "type": "featured-collection",
       "settings": {
         "heading": "The current cut",
-        "eyebrow": "Premium product wall",
-        "text": "A product-first shopping wall with save buttons, quick view, quick add, filter chips, layout modes, and fast comparison signals.",
+        "eyebrow": "New in",
+        "text": "Clean apparel cards with strong imagery, price clarity, color cues, save, quick view, and quick add kept out of the way.",
         "collection": "all",
         "products_to_show": 16
       }
@@ -89,16 +99,16 @@
     "category_edit": {
       "type": "category-product-edit",
       "blocks": {
-        "cat_1": { "type": "category_block", "settings": { "eyebrow": "01", "heading": "Tops", "keyword": "top", "text": "Premium upper-body staples with strong product focus and easy scanning." } },
-        "cat_2": { "type": "category_block", "settings": { "eyebrow": "02", "heading": "Bottoms", "keyword": "bottom", "text": "Clean silhouettes, relaxed utility, and daily rotation pieces." } },
-        "cat_3": { "type": "category_block", "settings": { "eyebrow": "03", "heading": "Accessories", "keyword": "accessor", "text": "Small details that make the whole fit feel intentional." } },
-        "cat_4": { "type": "category_block", "settings": { "eyebrow": "04", "heading": "New drops", "keyword": "new", "text": "The freshest pieces in the system, merchandised for fast decisions." } }
+        "cat_1": { "type": "category_block", "settings": { "eyebrow": "01", "heading": "Tops", "keyword": "top", "text": "Tees, overshirts, hoodies, and layers edited for first-click confidence." } },
+        "cat_2": { "type": "category_block", "settings": { "eyebrow": "02", "heading": "Bottoms", "keyword": "bottom", "text": "Trousers, cargos, shorts, and everyday rotation pieces in one clean lane." } },
+        "cat_3": { "type": "category_block", "settings": { "eyebrow": "03", "heading": "Accessories", "keyword": "accessor", "text": "Caps, socks, bags, and finishing pieces that complete the look." } },
+        "cat_4": { "type": "category_block", "settings": { "eyebrow": "04", "heading": "New drops", "keyword": "new", "text": "Fresh arrivals merchandised for urgency without shouting at the customer." } }
       },
       "block_order": ["cat_1", "cat_2", "cat_3", "cat_4"],
       "settings": {
         "eyebrow": "Shop by category",
-        "heading": "Find your piece fast.",
-        "text": "A cleaner route into Tops, Bottoms, Accessories, and new drop energy without making customers hunt through one flat product wall.",
+        "heading": "Shop by silhouette.",
+        "text": "The routes shoppers expect from serious clothing stores: tops, bottoms, accessories, and new drops.",
         "products_per_category": 5
       }
     },

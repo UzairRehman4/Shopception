@@ -62,8 +62,6 @@
 .home-premium-slider__slide.is-active .home-premium-slider__copy > * {
   opacity: 1 !important;
   visibility: visible !important;
-  transform: none !important;
-  filter: none !important;
 }
 
 .home-premium-slider__copy {
